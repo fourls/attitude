@@ -23,6 +23,16 @@ function setBackgroundColor(color) {
     document.body.style.backgroundColor = color;
 }
 
+function goToLevel(lev) {
+    if (lev -1 < levels.length) {
+        currentLevel = lev - 1;
+        game.state.start('main');
+        console.log("Level " + lev.toString() + " now playing.");
+    } else {
+        console.log("Level " + lev.toString() + " does not exist.");
+    }
+}
+
 var levels = [
     [
         'xxxxxxxxxxxxxxxxxxxx',
