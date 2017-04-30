@@ -243,6 +243,7 @@ var mainState = {
         game.world.enableBody = true;
         
         this.cursor = game.input.keyboard.createCursorKeys();
+        this.iWantToDie = game.input.keyboard.addKey(Phaser.Keyboard.X);
         
         this.walls = game.add.group(); // x
         this.coins = game.add.group(); // o
@@ -271,6 +272,9 @@ var mainState = {
             this.passLevel();
         }
         
+        if(this.iWantToDie.isDown) {
+            this.death();
+        }        
     },
     takeCoin: function(player,coin) {
         coin.kill();
