@@ -4,14 +4,19 @@
 	<meta charset="UTF-8" />
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="css/main.css" />
 	<title>attitude.</title>
 	<script type="text/javascript" src="js/phaser.min.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
 </head>
 <body>
     <div id="container" 
          height="440" 
          width="440" 
+         style="position:fixed; top:50%; left:50%; margin-top:-220px; margin-left:-220px;"
     ></div>
     <div id="help-dialog">
         <h2>how to play</h2>
@@ -23,10 +28,10 @@
         
         <h2>controls</h2>
         <ul>
-            <li>press <kbd>space</kbd> to proceed</li>
-            <li><kbd>&#8592;</kbd>/<kbd>a</kbd> to go left</li>
-            <li><kbd>&#8594;</kbd>/<kbd>d</kbd> to go right</li>
-            <li><kbd>&#8593;</kbd>/<kbd>w</kbd>/<kbd>space</kbd> to jump</li>
+            <li><kbd>space</kbd> to proceed</li>
+            <li><kbd>&#8592;</kbd>/<kbd>A</kbd> to go left</li>
+            <li><kbd>&#8594;</kbd>/<kbd>D</kbd> to go right</li>
+            <li><kbd>&#8593;</kbd>/<kbd>W</kbd>/<kbd>SPACE</kbd> to jump</li>
         </ul>
     </div>
     <script type="text/javascript" src="js/main.js"></script>
