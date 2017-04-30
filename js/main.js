@@ -49,10 +49,10 @@ var levels = [
         'x       xxxx       x',
         'x                  x',
         'x   !!!! o  !!!!   x',
+        'x        x         x',
+        'x                  x',
         'x        xx        x',
-        'x                  x',
-        'x     xxxxxxxx     x',
-        'x                  x',
+        'x     x      x     x',
         'xxx              xxx',
         'x                  x',
         'x         o        x',
@@ -62,7 +62,7 @@ var levels = [
         'xxxxxxxxxxxxxxxxxxxx',
         'x         x        x',
         'x   x         o    x',
-        'x       xxxxxxxxxxxx',
+        'x      xxxxxxxxxxxxx',
         'xx                 x',
         'x     o            x',
         'x                  x',
@@ -107,6 +107,37 @@ var levels = [
 var currentLevel = 0;
 var deaths = 0;
 
+var beginningState = {
+    preload: function() {
+        setBackgroundColor("#3598db");
+        game.load.image('loading', 'assets/loading.png');
+    },
+    create: function() {
+        game.state.add("loading", loadingState);
+        game.state.start("loading");
+    }
+};
+var loadingState = {
+    preload: function() {
+        //var loadingBar = game.add.sprite(game.world.centerX - (100/2), game.world.centerX - (20/2), "loading");
+        //this.load.setPreloadSprite(loadingBar);
+        setBackgroundColor("#3598db");
+        
+        game.load.image('player','assets/player.png');
+        game.load.image('wall','assets/wall.png');
+        game.load.image('coin','assets/coin.png');
+        game.load.image('enemy','assets/enemy.png');
+    },
+    create: function() {
+        game.state.add('main', mainState);
+        game.state.add('menu',gameMenuState);
+        game.state.add('death',deathState);
+        game.state.add('levelComplete',levelCompleteState);
+        game.state.add('end',endState);
+        
+        game.state.start("menu");
+    }
+};
 var gameMenuState = {
     preload: function () {
     },
@@ -204,10 +235,6 @@ var levelCompleteState = {
 };
 var mainState = {
     preload: function() {
-        game.load.image('player','assets/player.png');
-        game.load.image('wall','assets/wall.png');
-        game.load.image('coin','assets/coin.png');
-        game.load.image('enemy','assets/enemy.png');
     },
     createLevel: function() {
         var level = levels[currentLevel];
@@ -235,7 +262,7 @@ var mainState = {
         }
         
         this.player = game.add.sprite(playerX,playerY,'player');
-        this.player.body.gravity.y = 1000;
+        this.player.body.gravity.y = 1200;
     },
     create: function() {
         setBackgroundColor("#3598db");
@@ -243,6 +270,11 @@ var mainState = {
         game.world.enableBody = true;
         
         this.cursor = game.input.keyboard.createCursorKeys();
+        this.keyW = game.input.keyboard.addKey(Phaser.Keyboard.W);
+        this.keyA = game.input.keyboard.addKey(Phaser.Keyboard.A);
+        this.keyD = game.input.keyboard.addKey(Phaser.Keyboard.D);
+        this.keySpace = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+        this.iWantToDie = game.input.keyboard.addKey(Phaser.Keyboard.X);
         
         this.walls = game.add.group(); // x
         this.coins = game.add.group(); // o
@@ -257,20 +289,23 @@ var mainState = {
         game.physics.arcade.collide(this.player,this.enemies, this.death, null, this);
         
         
-        if (this.cursor.left.isDown)
+        if (this.cursor.left.isDown || this.keyA.isDown)
             this.player.body.velocity.x = -200;
-        else if (this.cursor.right.isDown)
+        else if (this.cursor.right.isDown || this.keyD.isDown)
             this.player.body.velocity.x = 200;
         else
             this.player.body.velocity.x = 0;
         
-        if (this.cursor.up.isDown && this.player.body.touching.down)
-            this.player.body.velocity.y = -350;
+        if ((this.cursor.up.isDown || this.keySpace.isDown || this.keyW.isDown) && this.player.body.touching.down)
+            this.player.body.velocity.y = -380;
         
         if(this.coins.total == 0) {
             this.passLevel();
         }
         
+        if(this.iWantToDie.isDown) {
+            this.death();
+        }        
     },
     takeCoin: function(player,coin) {
         coin.kill();
@@ -285,9 +320,5 @@ var mainState = {
 };
 
 var game = new Phaser.Game(440, 440,Phaser.AUTO,"container");
-game.state.add('main', mainState);
-game.state.add('menu',gameMenuState);
-game.state.add('death',deathState);
-game.state.add('levelComplete',levelCompleteState);
-game.state.add('end',endState);
-game.state.start('menu');
+game.state.add("beginning",beginningState);
+game.state.start('beginning');
