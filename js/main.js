@@ -235,7 +235,7 @@ var mainState = {
         }
         
         this.player = game.add.sprite(playerX,playerY,'player');
-        this.player.body.gravity.y = 1000;
+        this.player.body.gravity.y = 1200;
     },
     create: function() {
         setBackgroundColor("#3598db");
@@ -266,7 +266,7 @@ var mainState = {
             this.player.body.velocity.x = 0;
         
         if (this.cursor.up.isDown && this.player.body.touching.down)
-            this.player.body.velocity.y = -350;
+            this.player.body.velocity.y = -390;
         
         if(this.coins.total == 0) {
             this.passLevel();
