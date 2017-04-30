@@ -270,6 +270,10 @@ var mainState = {
         game.world.enableBody = true;
         
         this.cursor = game.input.keyboard.createCursorKeys();
+        this.keyW = game.input.keyboard.addKey(Phaser.Keyboard.W);
+        this.keyA = game.input.keyboard.addKey(Phaser.Keyboard.A);
+        this.keyD = game.input.keyboard.addKey(Phaser.Keyboard.D);
+        this.keySpace = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         this.iWantToDie = game.input.keyboard.addKey(Phaser.Keyboard.X);
         
         this.walls = game.add.group(); // x
@@ -285,14 +289,14 @@ var mainState = {
         game.physics.arcade.collide(this.player,this.enemies, this.death, null, this);
         
         
-        if (this.cursor.left.isDown)
+        if (this.cursor.left.isDown || this.keyA.isDown)
             this.player.body.velocity.x = -200;
-        else if (this.cursor.right.isDown)
+        else if (this.cursor.right.isDown || this.keyD.isDown)
             this.player.body.velocity.x = 200;
         else
             this.player.body.velocity.x = 0;
         
-        if (this.cursor.up.isDown && this.player.body.touching.down)
+        if ((this.cursor.up.isDown || this.keySpace.isDown || this.keyW.isDown) && this.player.body.touching.down)
             this.player.body.velocity.y = -390;
         
         if(this.coins.total == 0) {
