@@ -62,7 +62,7 @@ var levels = [
         'xxxxxxxxxxxxxxxxxxxx',
         'x         x        x',
         'x   x         o    x',
-        'x       xxxxxxxxxxxx',
+        'x      xxxxxxxxxxxxx',
         'xx                 x',
         'x     o            x',
         'x                  x',
