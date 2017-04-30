@@ -1,5 +1,8 @@
 body {
     margin: 0;
+    text-align:center;
+    font-family: monospace;
+    color: white;
 }
 
 #container {
@@ -8,4 +11,43 @@ body {
     left:50%; 
     margin-top:-220px; 
     margin-left:-220px;
+}
+
+kbd { 
+    background-color: #245a76;
+    border-radius: 4px; 
+    padding: 2px 5px; 
+    margin: 2px; 
+    color: #fff; 
+    text-decoration: none; 
+    font-family: monospace;
+}
+#help-dialog {
+    position: fixed;
+    bottom: 30px;
+    width: 300px;
+    margin-left: -150px;
+    display: inline-block;
+    text-align: left;
+    font-size: 16px;
+}
+
+#help-dialog:hover {
+}
+
+#help-dialog h2 {
+    margin-top: 8px;
+    margin-bottom: 2px;
+    font-size: 24px;
+}
+
+#help-dialog ul {
+    list-style: none;
+    padding-left: 20px;
+    box-sizing: border-box;
+    margin: 0;
+}
+
+#help-dialog li {
+    margin: 5px;
 }
