@@ -238,6 +238,7 @@ var mainState = {
     },
     takeCoin: function(player,coin) {
         coin.kill();
+        this.player.body.touching.down = false;
     },
     death: function() {
         game.state.start('death');
