@@ -297,7 +297,7 @@ var mainState = {
             this.player.body.velocity.x = 0;
         
         if ((this.cursor.up.isDown || this.keySpace.isDown || this.keyW.isDown) && this.player.body.touching.down)
-            this.player.body.velocity.y = -390;
+            this.player.body.velocity.y = -380;
         
         if(this.coins.total == 0) {
             this.passLevel();
