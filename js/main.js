@@ -107,6 +107,37 @@ var levels = [
 var currentLevel = 0;
 var deaths = 0;
 
+var beginningState = {
+    preload: function() {
+        setBackgroundColor("#3598db");
+        game.load.image('loading', 'assets/loading.png');
+    },
+    create: function() {
+        game.state.add("loading", loadingState);
+        game.state.start("loading");
+    }
+};
+var loadingState = {
+    preload: function() {
+        //var loadingBar = game.add.sprite(game.world.centerX - (100/2), game.world.centerX - (20/2), "loading");
+        //this.load.setPreloadSprite(loadingBar);
+        setBackgroundColor("#3598db");
+        
+        game.load.image('player','assets/player.png');
+        game.load.image('wall','assets/wall.png');
+        game.load.image('coin','assets/coin.png');
+        game.load.image('enemy','assets/enemy.png');
+    },
+    create: function() {
+        game.state.add('main', mainState);
+        game.state.add('menu',gameMenuState);
+        game.state.add('death',deathState);
+        game.state.add('levelComplete',levelCompleteState);
+        game.state.add('end',endState);
+        
+        game.state.start("menu");
+    }
+};
 var gameMenuState = {
     preload: function () {
     },
@@ -204,10 +235,6 @@ var levelCompleteState = {
 };
 var mainState = {
     preload: function() {
-        game.load.image('player','assets/player.png');
-        game.load.image('wall','assets/wall.png');
-        game.load.image('coin','assets/coin.png');
-        game.load.image('enemy','assets/enemy.png');
     },
     createLevel: function() {
         var level = levels[currentLevel];
@@ -289,9 +316,5 @@ var mainState = {
 };
 
 var game = new Phaser.Game(440, 440,Phaser.AUTO,"container");
-game.state.add('main', mainState);
-game.state.add('menu',gameMenuState);
-game.state.add('death',deathState);
-game.state.add('levelComplete',levelCompleteState);
-game.state.add('end',endState);
-game.state.start('menu');
+game.state.add("beginning",beginningState);
+game.state.start('beginning');
