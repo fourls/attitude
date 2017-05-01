@@ -370,30 +370,66 @@ var levelCreatorState = {
         this.playerKey = game.input.keyboard.addKey(Phaser.Keyboard.Y);
         this.deleteKey = game.input.keyboard.addKey(Phaser.Keyboard.X);
         this.debugKey = game.input.keyboard.addKey(Phaser.Keyboard.H);
+        this.cursorKeys = game.input.keyboard.createCursorKeys();
+        
+        this.wallKey.onDown.add(() => {
+            this.map[this.cursor[1]][this.cursor[0]] = "x";
+            this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'wall'));
+        });
+        this.coinKey.onDown.add(() => {
+            this.map[this.cursor[1]][this.cursor[0]] = "o";
+            this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'coin'));
+        });
+        this.enemyKey.onDown.add(() => {
+            this.map[this.cursor[1]][this.cursor[0]] = "!";
+            this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'enemy'));
+        });
+        this.playerKey.onDown.add(() => {
+            this.map[this.cursor[1]][this.cursor[0]] = "@";
+            this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'player'));
+        });
+        this.deleteKey.onDown.add(() => {
+            this.map[this.cursor[1]][this.cursor[0]] = " ";
+            var current;
+            for (var i = 0; i < this.buildingBlocks.length; i++) {
+                current = this.buildingBlocks[i];
+                if(current != undefined) {
+                    if(current.x == this.cursor[0] && current.y == this.cursor[1]) {
+                        this.buildingBlocks[i].kill();
+                    }
+                }
+            }
+        });
+        this.debugKey.onDown.add(() => {
+            console.log(this.map);
+            console.log(this.cursor);
+        });
+        
+        this.cursorKeys.left.onDown.add(() => {
+            if (this.cursor[0] > 0) {
+                this.cursor[0] --;
+            }
+        });
+        this.cursorKeys.right.onDown.add(() => {
+            if (this.cursor[0] < 19) {
+                this.cursor[0] ++;
+            }
+        });
+        this.cursorKeys.up.onDown.add(() => {
+            if (this.cursor[1] > 0) {
+                this.cursor[1] --;
+            }
+        });
+        this.cursorKeys.down.onDown.add(() => {
+            if (this.cursor[1] < 19) {
+                this.cursor[1] ++;
+            }
+        });
+        
         
         this.buildingBlocks = game.add.group();
     },
     update: function() {
-        if (this.wallKey.isDown) {
-            this.map[this.cursor[1]][this.cursor[0]] = "x";
-            this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'wall'));
-        } else if (this.coinKey.isDown) {
-            this.map[this.cursor[1]][this.cursor[0]] = "o";
-            this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'coin'));
-        } else if (this.enemyKey.isDown) {
-            this.map[this.cursor[1]][this.cursor[0]] = "!";
-            this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'enemy'));
-        } else if (this.playerKey.isDown) {
-            this.map[this.cursor[1]][this.cursor[0]] = "@";
-            this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'player'));
-        } else if (this.deleteKey.isDown) {
-            this.map[this.cursor[1]][this.cursor[0]] = " ";
-            for (var i = 0; i < this.buildingBlocks.length; i++) {
-                this.buildingBlocks[i];
-            }
-        } else if (this.debugKey.isDown) {
-            console.log(this.map);
-        }
     }
 };
 var mainState = {
