@@ -403,13 +403,12 @@ var levelCreatorState = {
         });
         this.deleteKey.onDown.add(() => {
             this.map[this.cursor[1]][this.cursor[0]] = " ";
-            var current;
-            for (var i = 0; i < this.buildingBlocks.length; i++) {
-                current = this.buildingBlocks[i];
-                if(current != undefined) {
-                    if(current.x == this.cursor[0] && current.y == this.cursor[1]) {
-                        this.buildingBlocks[i].kill();
-                    }
+            for (var i = 0; i < this.buildingBlocks.children.length; i++) {
+                if(
+                    (this.buildingBlocks.children[i].x/20) - 1 == this.cursor[0] &&
+                    (this.buildingBlocks.children[i].y/20) - 1 == this.cursor[1]
+                ) {
+                    this.buildingBlocks.children[i].kill();
                 }
             }
         });
