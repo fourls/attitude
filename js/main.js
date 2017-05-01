@@ -102,6 +102,28 @@ var levels = [
         'x           o      x',
         'xxxxxxxxxxxxxxxxxxxx',
     ],
+    [
+        'xxxxxxxxxxxxxxxxxxxx',
+        'x   @x             x',
+        'x xxxx   o         x',
+        'x       xxx        x',
+        'x                  x',
+        'x!xxxx           o x',
+        'x              xxxxx',
+        'x    o             x',
+        'x  xxxxxx          x',
+        'x                  x',
+        'x                  x',
+        'x                  x',
+        'xx                 x',
+        'x                  x',
+        'x   o              x',
+        'x   x              x',
+        'x       xxxxx      x',
+        'x                  x',
+        'xo               o x',
+        'x!!!!!!!!!!!!!!!xx!x',
+    ],
     
 ];
 var currentLevel = 0;
