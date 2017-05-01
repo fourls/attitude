@@ -13,6 +13,7 @@ function goToLevel(lev) {
     }
 }
 
+var userLevel = [];
 var levels = [
     [
         'xxxxxxxxxxxxxxxxxxxx',
@@ -194,6 +195,7 @@ var levels = [
 ];
 var currentLevel = 0;
 var deaths = 0;
+var inUserLevel = false;
 
 var beginningState = {
     preload: function() {
@@ -222,6 +224,7 @@ var loadingState = {
         game.state.add('death',deathState);
         game.state.add('levelComplete',levelCompleteState);
         game.state.add('end',endState);
+        game.state.add("levelCreator", levelCreatorState);
         
         game.state.start("menu");
     }
@@ -241,10 +244,13 @@ var gameMenuState = {
         setBackgroundColor("#3598db");
         game.add.existing(this.titleText);
         this.spacebar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+        this.b = game.input.keyboard.addKey(Phaser.Keyboard.B);
     },
     update: function() {
         if(this.spacebar.isDown) {
             game.state.start("main");
+        } else if (this.b.isDown) {
+            game.state.start("levelCreator");
         }
     }
 };
@@ -323,12 +329,81 @@ var levelCompleteState = {
         }
     }
 };
+var levelCreatorState = {
+    preload: function () {
+    },
+    init: function() {
+    },
+    create: function() {
+        setBackgroundColor("#3598db");
+        this.cursor = [0,0];
+        this.cursor = [0,0];
+        this.map = 
+        [
+            ['','','','','','','','','','','','','','','','','','','',''],
+            ['','','','','','','','','','','','','','','','','','','',''],
+            ['','','','','','','','','','','','','','','','','','','',''],
+            ['','','','','','','','','','','','','','','','','','','',''],
+            ['','','','','','','','','','','','','','','','','','','',''],
+            ['','','','','','','','','','','','','','','','','','','',''],
+            ['','','','','','','','','','','','','','','','','','','',''],
+            ['','','','','','','','','','','','','','','','','','','',''],
+            ['','','','','','','','','','','','','','','','','','','',''],
+            ['','','','','','','','','','','','','','','','','','','',''],
+            ['','','','','','','','','','','','','','','','','','','',''],
+            ['','','','','','','','','','','','','','','','','','','',''],
+            ['','','','','','','','','','','','','','','','','','','',''],
+            ['','','','','','','','','','','','','','','','','','','',''],
+            ['','','','','','','','','','','','','','','','','','','',''],
+            ['','','','','','','','','','','','','','','','','','','',''],
+            ['','','','','','','','','','','','','','','','','','','',''],
+            ['','','','','','','','','','','','','','','','','','','',''],
+            ['','','','','','','','','','','','','','','','','','','',''],
+            ['','','','','','','','','','','','','','','','','','','',''],
+        ];
+        
+        
+        
+        this.wallKey = game.input.keyboard.addKey(Phaser.Keyboard.E);
+        this.coinKey = game.input.keyboard.addKey(Phaser.Keyboard.R);
+        this.enemyKey = game.input.keyboard.addKey(Phaser.Keyboard.T);
+        this.playerKey = game.input.keyboard.addKey(Phaser.Keyboard.Y);
+        this.deleteKey = game.input.keyboard.addKey(Phaser.Keyboard.X);
+        this.debugKey = game.input.keyboard.addKey(Phaser.Keyboard.H);
+        
+        this.buildingBlocks = game.add.group();
+    },
+    update: function() {
+        if (this.wallKey.isDown) {
+            this.map[this.cursor[1]][this.cursor[0]] = "x";
+            this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'wall'));
+        } else if (this.coinKey.isDown) {
+            this.map[this.cursor[1]][this.cursor[0]] = "o";
+            this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'coin'));
+        } else if (this.enemyKey.isDown) {
+            this.map[this.cursor[1]][this.cursor[0]] = "!";
+            this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'enemy'));
+        } else if (this.playerKey.isDown) {
+            this.map[this.cursor[1]][this.cursor[0]] = "@";
+            this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'player'));
+        } else if (this.deleteKey.isDown) {
+            this.map[this.cursor[1]][this.cursor[0]] = " ";
+            for (var i = 0; i < this.buildingBlocks.length; i++) {
+                this.buildingBlocks[i];
+            }
+        } else if (this.debugKey.isDown) {
+            console.log(this.map);
+        }
+    }
+};
 var mainState = {
     preload: function() {
     },
     createLevel: function() {
         var level = levels[currentLevel];
-        
+        if (inUserLevel) {
+            level = userLevel;
+        }
         var playerX = 60;
         var playerY = 100;
         
