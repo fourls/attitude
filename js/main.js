@@ -230,6 +230,7 @@ var loadingState = {
         game.load.image('coin','assets/coin.png');
         game.load.image('enemy','assets/enemy.png');
         game.load.image('select','assets/select.png');
+        game.load.image('outline','assets/outline.png');
     },
     create: function() {
         game.state.add('main', mainState);
@@ -331,14 +332,21 @@ var levelCompleteState = {
         setBackgroundColor("#3598db");
         game.add.existing(this.titleText);
         this.spacebar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-        currentLevel ++;
-        if (currentLevel >= levels.length) {
-            game.state.start('end');
+        if(!inUserLevel) {
+            currentLevel ++;
+            if (currentLevel >= levels.length) {
+                game.state.start('end');
+            }
+        } else {
         }
     },
     update: function() {
         if(this.spacebar.isDown) {
-            game.state.start("main");
+            if(inUserLevel) {
+                game.state.start("menu");
+            } else {
+                game.state.start("main");
+            }
         }
     }
 };
@@ -375,14 +383,15 @@ var levelCreatorState = {
             [' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
         ];
         
-        this.cursorSprite = game.add.sprite(20,20,'select');
+        game.add.sprite(0,0,'outline');
         
-        this.wallKey = game.input.keyboard.addKey(Phaser.Keyboard.E);
-        this.coinKey = game.input.keyboard.addKey(Phaser.Keyboard.R);
-        this.enemyKey = game.input.keyboard.addKey(Phaser.Keyboard.T);
-        this.playerKey = game.input.keyboard.addKey(Phaser.Keyboard.Y);
-        this.deleteKey = game.input.keyboard.addKey(Phaser.Keyboard.X);
+        this.wallKey = game.input.keyboard.addKey(Phaser.Keyboard.W);
+        this.coinKey = game.input.keyboard.addKey(Phaser.Keyboard.A);
+        this.enemyKey = game.input.keyboard.addKey(Phaser.Keyboard.D);
+        this.playerKey = game.input.keyboard.addKey(Phaser.Keyboard.S);
+        this.deleteKey = game.input.keyboard.addKey(Phaser.Keyboard.Q);
         this.debugKey = game.input.keyboard.addKey(Phaser.Keyboard.H);
+        this.submitKey = game.input.keyboard.addKey(Phaser.Keyboard.E);
         this.cursorKeys = game.input.keyboard.createCursorKeys();
         
         this.wallKey.onDown.add(() => {
@@ -412,11 +421,18 @@ var levelCreatorState = {
                 }
             }
         });
+        this.submitKey.onDown.add(() => {
+            userLevel = createMapFromArray(this.map);
+            inUserLevel = true;
+            game.state.start("main");
+        });
         this.debugKey.onDown.add(() => {
             console.log(this.map);
             console.log(this.cursor);
             console.log(createMapFromArray(this.map));
         });
+        
+        this.cursorSprite = game.add.sprite(20,20,'select');
         
         this.cursorKeys.left.onDown.add(() => {
             if (this.cursor[0] > 0) {
@@ -445,8 +461,11 @@ var levelCreatorState = {
         
         
         this.buildingBlocks = game.add.group();
+        this.selectGroup = game.add.group();
+        this.selectGroup.add(this.cursorSprite);
     },
     update: function() {
+        
     }
 };
 var mainState = {
