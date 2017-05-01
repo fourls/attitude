@@ -267,10 +267,12 @@ var deathState = {
         if(deaths > 3) {
             this.titleText.text = "worst attitude.";
             setBackgroundColor("#953f3f");
+            deaths = 0;
+            currentLevel = 0;
         }
     },
     update: function() {
-        if(this.spacebar.isDown && deaths <= 3) {
+        if(this.spacebar.isDown) {
             game.state.start("main");
         }
     }
