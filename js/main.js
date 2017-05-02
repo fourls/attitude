@@ -278,10 +278,17 @@ var gameMenuState = {
             align: 'center'
         });
         this.titleText.anchor.set(0.5);
+        this.levCreText = game.make.text(game.world.centerX, game.world.centerY + 70, "[space] play\n\n[b] level maker", {
+            font: 'bold 18px monospace',
+            fill: 'rgba(255,255,255,0.6)',
+            align: 'left'
+        });
+        this.levCreText.anchor.set(0.5);
     },
     create: function() {
         setBackgroundColor("#3598db");
         game.add.existing(this.titleText);
+        //game.add.existing(this.levCreText);
         this.spacebar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         this.b = game.input.keyboard.addKey(Phaser.Keyboard.B);
     },
