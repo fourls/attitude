@@ -227,6 +227,7 @@ var levels = [
      "x                  x", 
      "x!!!!!!!!!!!xxx!!!!x"]
 ];
+var keyCD = {};
 
 var currentLevel = 0;
 var levelCreatorListenersInitialised = false;
@@ -442,6 +443,7 @@ var levelCreatorState = {
         this.keyQ = game.input.keyboard.addKey(Phaser.Keyboard.Q);
         this.cursorKeys = game.input.keyboard.createCursorKeys();
         
+        /*
         if(!levelCreatorListenersInitialised) {
             this.wallKey.onDown.add(() => {
                 this.map[this.cursor[1]][this.cursor[0]] = "x";
@@ -505,7 +507,7 @@ var levelCreatorState = {
                     this.cursorSprite.y = this.cursor[1]*20 + 20;
                 }
             });
-        }
+        }*/
         
         
         this.buildingBlocks = game.add.group();
@@ -539,6 +541,80 @@ var levelCreatorState = {
         this.selectGroup.add(this.cursorSprite);
     },
     update: function() {
+        if(this.wallKey.isDown && (keyCD["wallKey"] < game.time.now || keyCD["wallKey"] == undefined)) {
+            keyCD["wallKey"] = game.time.now + 150;
+            this.map[this.cursor[1]][this.cursor[0]] = "x";
+            this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'wall'));
+        }
+        
+        if(this.coinKey.isDown && (keyCD["coinKey"] < game.time.now || keyCD["coinKey"] == undefined)) {
+            keyCD["coinKey"] = game.time.now + 150;
+            this.map[this.cursor[1]][this.cursor[0]] = "o";
+            this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'coin'));
+        }
+        if(this.enemyKey.isDown && (keyCD["enemyKey"] < game.time.now || keyCD["enemyKey"] == undefined)) {
+            keyCD["enemyKey"] = game.time.now + 150;
+            this.map[this.cursor[1]][this.cursor[0]] = "!";
+            this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'enemy'));
+        }
+        if(this.playerKey.isDown && (keyCD["playerKey"] < game.time.now || keyCD["playerKey"] == undefined)) {
+            keyCD["playerKey"] = game.time.now + 150;
+            this.map[this.cursor[1]][this.cursor[0]] = "@";
+            this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'player'));
+        }
+        if(this.deleteKey.isDown && (keyCD["deleteKey"] < game.time.now || keyCD["deleteKey"] == undefined)) {
+            keyCD["deleteKey"] = game.time.now + 150;
+            this.map[this.cursor[1]][this.cursor[0]] = " ";
+            for (var i = 0; i < this.buildingBlocks.children.length; i++) {
+                if(
+                    (this.buildingBlocks.children[i].x/20) - 1 == this.cursor[0] &&
+                    (this.buildingBlocks.children[i].y/20) - 1 == this.cursor[1]
+                ) {
+                    this.buildingBlocks.children[i].kill();
+                }
+            }
+        }
+        if(this.submitKey.isDown) {
+            userLevel["array"] = this.map;
+            userLevel["map"] = createMapFromArray(this.map);
+            inUserLevel = true;
+            this.removeEventListeners();
+            game.state.start("main");
+        }
+        if(this.debugKey.isDown && (keyCD["debugKey"] < game.time.now || keyCD["debugKey"] == undefined)) {
+            keyCD["debugKey"] = game.time.now + 200;
+            console.log(createMapFromArray(this.map));
+        }
+
+        if(this.cursorKeys.left.isDown && (keyCD["cursorKeys.left"] < game.time.now || keyCD["cursorKeys.left"] == undefined)) {
+            keyCD["cursorKeys.left"] = game.time.now + 200;
+            if (this.cursor[0] > 0) {
+                this.cursor[0] --;
+                this.cursorSprite.x = this.cursor[0]*20 + 20;
+            }
+        }
+        if(this.cursorKeys.right.isDown && (keyCD["cursorKeys.right"] < game.time.now || keyCD["cursorKeys.right"] == undefined)) {
+            keyCD["cursorKeys.right"] = game.time.now + 200;
+            if (this.cursor[0] < 19) {
+                this.cursor[0] ++;
+                this.cursorSprite.x = this.cursor[0]*20 + 20;
+            }
+        }
+        if(this.cursorKeys.up.isDown && (keyCD["cursorKeys.up"] < game.time.now || keyCD["cursorKeys.up"] == undefined)) {
+            keyCD["cursorKeys.up"] = game.time.now + 200;
+            if (this.cursor[1] > 0) {
+                this.cursor[1] --;
+                this.cursorSprite.y = this.cursor[1]*20 + 20;
+            }
+        }
+        if(this.cursorKeys.down.isDown && (keyCD["cursorKeys.down"] < game.time.now || keyCD["cursorKeys.down"] == undefined)) {
+            keyCD["cursorKeys.down"] = game.time.now + 200;
+            if (this.cursor[1] < 19) {
+                this.cursor[1] ++;
+                this.cursorSprite.y = this.cursor[1]*20 + 20;
+            }
+        }
+        
         if (this.keyQ.isDown) {
             inUserLevel = false;
             this.removeEventListeners();
