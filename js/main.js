@@ -371,12 +371,12 @@ var levelCompleteState = {
                 game.state.start('end');
             }
         } else {
-            game.state.start("levelCreator");
         }
     },
     update: function() {
         if(this.spacebar.isDown) {
             if(inUserLevel) {
+                game.state.start("levelCreator");
             } else {
                 game.state.start("main");
             }
