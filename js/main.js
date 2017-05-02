@@ -205,9 +205,9 @@ var levels = [
         '  x  x             x',
         '  xo x  o      o   x',
         '  x!!xxxxxxxxxxxxxxx',
-    ],
-    
+    ],  
 ];
+
 var currentLevel = 0;
 var levelCreatorListenersInitialised = false;
 var deaths = 0;
@@ -284,20 +284,28 @@ var deathState = {
         this.titleText.anchor.set(0.5);
     },
     create: function() {
-        deaths ++;
         setBackgroundColor("#3598db");
         game.add.existing(this.titleText);
         this.spacebar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-        if(deaths > 3) {
-            this.titleText.text = "worst attitude.";
-            setBackgroundColor("#953f3f");
-            deaths = 0;
-            currentLevel = 0;
+        if(inUserLevel) {
+            
+        } else {
+            deaths ++;
+            if(deaths > 3) {
+                this.titleText.text = "worst attitude.";
+                setBackgroundColor("#953f3f");
+                deaths = 0;
+                currentLevel = 0;
+            }
         }
     },
     update: function() {
         if(this.spacebar.isDown) {
-            game.state.start("main");
+            if(inUserLevel) {
+                game.state.start("levelCreator");
+            } else {
+                game.state.start("main");
+            }
         }
     }
 };
@@ -342,12 +350,12 @@ var levelCompleteState = {
                 game.state.start('end');
             }
         } else {
+            game.state.start("levelCreator");
         }
     },
     update: function() {
         if(this.spacebar.isDown) {
             if(inUserLevel) {
-                game.state.start("levelCreator");
             } else {
                 game.state.start("main");
             }
@@ -408,9 +416,10 @@ var levelCreatorState = {
         this.coinKey = game.input.keyboard.addKey(Phaser.Keyboard.A);
         this.enemyKey = game.input.keyboard.addKey(Phaser.Keyboard.D);
         this.playerKey = game.input.keyboard.addKey(Phaser.Keyboard.S);
-        this.deleteKey = game.input.keyboard.addKey(Phaser.Keyboard.Q);
+        this.deleteKey = game.input.keyboard.addKey(Phaser.Keyboard.E);
         this.debugKey = game.input.keyboard.addKey(Phaser.Keyboard.H);
-        this.submitKey = game.input.keyboard.addKey(Phaser.Keyboard.E);
+        this.submitKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+        this.keyQ = game.input.keyboard.addKey(Phaser.Keyboard.Q);
         this.cursorKeys = game.input.keyboard.createCursorKeys();
         
         if(!levelCreatorListenersInitialised) {
@@ -449,8 +458,7 @@ var levelCreatorState = {
                 game.state.start("main");
             });
             this.debugKey.onDown.add(() => {
-                console.log(this.cursor);
-                console.log(this.cursorSprite);
+                console.log(createMapFromArray(this.map));
             });
 
             this.cursorKeys.left.onDown.add(() => {
@@ -511,13 +519,35 @@ var levelCreatorState = {
         this.selectGroup.add(this.cursorSprite);
     },
     update: function() {
-        
+        if (this.keyQ.isDown) {
+            inUserLevel = false;
+            this.removeEventListeners();
+            game.state.start("menu");
+        }
     }
 };
 var mainState = {
     preload: function() {
     },
-    createLevel: function() {
+    create: function() {
+        setBackgroundColor("#3598db");
+        game.physics.startSystem(Phaser.Physics.ARCADE);
+        game.world.enableBody = true;
+        
+        this.cursor = game.input.keyboard.createCursorKeys();
+        this.keyW = game.input.keyboard.addKey(Phaser.Keyboard.W);
+        this.keyA = game.input.keyboard.addKey(Phaser.Keyboard.A);
+        this.keyD = game.input.keyboard.addKey(Phaser.Keyboard.D);
+        this.keyQ = game.input.keyboard.addKey(Phaser.Keyboard.Q);
+        this.keySpace = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+        this.iWantToDie = game.input.keyboard.addKey(Phaser.Keyboard.X);
+        
+        this.walls = game.add.group(); // x
+        this.coins = game.add.group(); // o
+        this.enemies = game.add.group(); // !
+        
+        // 20x20 level 
+        
         var level = levels[currentLevel];
         if (inUserLevel) {
             level = userLevel["map"];
@@ -547,25 +577,6 @@ var mainState = {
         this.player = game.add.sprite(playerX,playerY,'player');
         this.player.body.gravity.y = 1200;
     },
-    create: function() {
-        setBackgroundColor("#3598db");
-        game.physics.startSystem(Phaser.Physics.ARCADE);
-        game.world.enableBody = true;
-        
-        this.cursor = game.input.keyboard.createCursorKeys();
-        this.keyW = game.input.keyboard.addKey(Phaser.Keyboard.W);
-        this.keyA = game.input.keyboard.addKey(Phaser.Keyboard.A);
-        this.keyD = game.input.keyboard.addKey(Phaser.Keyboard.D);
-        this.keySpace = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-        this.iWantToDie = game.input.keyboard.addKey(Phaser.Keyboard.X);
-        
-        this.walls = game.add.group(); // x
-        this.coins = game.add.group(); // o
-        this.enemies = game.add.group(); // !
-        
-        // 20x20 level 
-        this.createLevel();
-    },
     update: function() {
         game.physics.arcade.collide(this.player,this.walls);
         game.physics.arcade.collide(this.player,this.coins, this.takeCoin, null, this);
@@ -588,7 +599,15 @@ var mainState = {
         
         if(this.iWantToDie.isDown) {
             this.death();
-        }        
+        }
+    
+        if(this.keyQ.isDown) {
+            if(inUserLevel) {
+                game.state.start("levelCreator");
+            } else {
+                game.state.start("menu");
+            }
+        }
     },
     takeCoin: function(player,coin) {
         coin.kill();
