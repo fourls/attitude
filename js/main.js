@@ -25,7 +25,10 @@ function createMapFromArray (arr) {
     return returnArr;
 }
 
-var userLevel = [];
+var userLevel = {
+    map: [],
+    array: []
+};
 var levels = [
     [
         'xxxxxxxxxxxxxxxxxxxx',
@@ -206,6 +209,7 @@ var levels = [
     
 ];
 var currentLevel = 0;
+var levelCreatorListenersInitialised = false;
 var deaths = 0;
 var inUserLevel = false;
 
@@ -343,7 +347,7 @@ var levelCompleteState = {
     update: function() {
         if(this.spacebar.isDown) {
             if(inUserLevel) {
-                game.state.start("menu");
+                game.state.start("levelCreator");
             } else {
                 game.state.start("main");
             }
@@ -355,10 +359,24 @@ var levelCreatorState = {
     },
     init: function() {
     },
+    removeEventListeners: function() {
+        this.wallKey.onDown.removeAll();
+        this.coinKey.onDown.removeAll();
+        this.enemyKey.onDown.removeAll();
+        this.playerKey.onDown.removeAll();
+        this.deleteKey.onDown.removeAll();
+        this.debugKey.onDown.removeAll();
+        this.submitKey.onDown.removeAll();
+        this.cursorKeys.left.onDown.removeAll();
+        this.cursorKeys.right.onDown.removeAll();
+        this.cursorKeys.up.onDown.removeAll();
+        this.cursorKeys.down.onDown.removeAll();
+    },
     create: function() {
+        game.world.enableBody = false;
         setBackgroundColor("#3598db");
         this.cursor = [0,0];
-        this.cursor = [0,0];
+        
         this.map = 
         [//   0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19
             [' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
@@ -383,6 +401,7 @@ var levelCreatorState = {
             [' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
         ];
         
+        
         game.add.sprite(0,0,'outline');
         
         this.wallKey = game.input.keyboard.addKey(Phaser.Keyboard.W);
@@ -394,73 +413,100 @@ var levelCreatorState = {
         this.submitKey = game.input.keyboard.addKey(Phaser.Keyboard.E);
         this.cursorKeys = game.input.keyboard.createCursorKeys();
         
-        this.wallKey.onDown.add(() => {
-            this.map[this.cursor[1]][this.cursor[0]] = "x";
-            this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'wall'));
-        });
-        this.coinKey.onDown.add(() => {
-            this.map[this.cursor[1]][this.cursor[0]] = "o";
-            this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'coin'));
-        });
-        this.enemyKey.onDown.add(() => {
-            this.map[this.cursor[1]][this.cursor[0]] = "!";
-            this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'enemy'));
-        });
-        this.playerKey.onDown.add(() => {
-            this.map[this.cursor[1]][this.cursor[0]] = "@";
-            this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'player'));
-        });
-        this.deleteKey.onDown.add(() => {
-            this.map[this.cursor[1]][this.cursor[0]] = " ";
-            for (var i = 0; i < this.buildingBlocks.children.length; i++) {
-                if(
-                    (this.buildingBlocks.children[i].x/20) - 1 == this.cursor[0] &&
-                    (this.buildingBlocks.children[i].y/20) - 1 == this.cursor[1]
-                ) {
-                    this.buildingBlocks.children[i].kill();
+        if(!levelCreatorListenersInitialised) {
+            this.wallKey.onDown.add(() => {
+                this.map[this.cursor[1]][this.cursor[0]] = "x";
+                this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'wall'));
+            });
+            this.coinKey.onDown.add(() => {
+                this.map[this.cursor[1]][this.cursor[0]] = "o";
+                this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'coin'));
+            });
+            this.enemyKey.onDown.add(() => {
+                this.map[this.cursor[1]][this.cursor[0]] = "!";
+                this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'enemy'));
+            });
+            this.playerKey.onDown.add(() => {
+                this.map[this.cursor[1]][this.cursor[0]] = "@";
+                this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'player'));
+            });
+            this.deleteKey.onDown.add(() => {
+                this.map[this.cursor[1]][this.cursor[0]] = " ";
+                for (var i = 0; i < this.buildingBlocks.children.length; i++) {
+                    if(
+                        (this.buildingBlocks.children[i].x/20) - 1 == this.cursor[0] &&
+                        (this.buildingBlocks.children[i].y/20) - 1 == this.cursor[1]
+                    ) {
+                        this.buildingBlocks.children[i].kill();
+                    }
                 }
-            }
-        });
-        this.submitKey.onDown.add(() => {
-            userLevel = createMapFromArray(this.map);
-            inUserLevel = true;
-            game.state.start("main");
-        });
-        this.debugKey.onDown.add(() => {
-            console.log(this.map);
-            console.log(this.cursor);
-            console.log(createMapFromArray(this.map));
-        });
-        
-        this.cursorSprite = game.add.sprite(20,20,'select');
-        
-        this.cursorKeys.left.onDown.add(() => {
-            if (this.cursor[0] > 0) {
-                this.cursor[0] --;
-                this.cursorSprite.x = this.cursor[0]*20 + 20;
-            }
-        });
-        this.cursorKeys.right.onDown.add(() => {
-            if (this.cursor[0] < 19) {
-                this.cursor[0] ++;
-                this.cursorSprite.x = this.cursor[0]*20 + 20;
-            }
-        });
-        this.cursorKeys.up.onDown.add(() => {
-            if (this.cursor[1] > 0) {
-                this.cursor[1] --;
-                this.cursorSprite.y = this.cursor[1]*20 + 20;
-            }
-        });
-        this.cursorKeys.down.onDown.add(() => {
-            if (this.cursor[1] < 19) {
-                this.cursor[1] ++;
-                this.cursorSprite.y = this.cursor[1]*20 + 20;
-            }
-        });
+            });
+            this.submitKey.onDown.add(() => {
+                userLevel["array"] = this.map;
+                userLevel["map"] = createMapFromArray(this.map);
+                inUserLevel = true;
+                this.removeEventListeners();
+                game.state.start("main");
+            });
+            this.debugKey.onDown.add(() => {
+                console.log(this.cursor);
+                console.log(this.cursorSprite);
+            });
+
+            this.cursorKeys.left.onDown.add(() => {
+                if (this.cursor[0] > 0) {
+                    this.cursor[0] --;
+                    this.cursorSprite.x = this.cursor[0]*20 + 20;
+                }
+            });
+            this.cursorKeys.right.onDown.add(() => {
+                if (this.cursor[0] < 19) {
+                    this.cursor[0] ++;
+                    this.cursorSprite.x = this.cursor[0]*20 + 20;
+                }
+            });
+            this.cursorKeys.up.onDown.add(() => {
+                if (this.cursor[1] > 0) {
+                    this.cursor[1] --;
+                    this.cursorSprite.y = this.cursor[1]*20 + 20;
+                }
+            });
+            this.cursorKeys.down.onDown.add(() => {
+                if (this.cursor[1] < 19) {
+                    this.cursor[1] ++;
+                    this.cursorSprite.y = this.cursor[1]*20 + 20;
+                }
+            });
+        }
         
         
         this.buildingBlocks = game.add.group();
+        
+        if (inUserLevel) {
+            this.map = userLevel["array"];
+            inUserLevel = false;
+            
+            for (var i = 0; i < this.map.length; i++) {
+                for (var j = 0; j < this.map[i].length; j++) {
+                    if (this.map[i][j] == 'x') {
+                        var wall = game.add.sprite(20+20*j,20+20*i,'wall');
+                        this.buildingBlocks.add(wall);
+                    } else if (this.map[i][j] == 'o') {
+                        var coin = game.add.sprite(20+20*j,20+20*i,'coin');
+                        this.buildingBlocks.add(coin);
+                    } else if (this.map[i][j] == '!') {
+                        var enemy = game.add.sprite(20+20*j,20+20*i,'enemy');
+                        this.buildingBlocks.add(enemy);
+                    } else if (this.map[i][j] == '@') {
+                        var player = game.add.sprite(20+20*j,20+20*i,'player');
+                        this.buildingBlocks.add(player);
+                    }
+                }
+            }
+        }
+        
+        
+        this.cursorSprite = game.add.sprite(20,20,'select');
         this.selectGroup = game.add.group();
         this.selectGroup.add(this.cursorSprite);
     },
@@ -474,7 +520,7 @@ var mainState = {
     createLevel: function() {
         var level = levels[currentLevel];
         if (inUserLevel) {
-            level = userLevel;
+            level = userLevel["map"];
         }
         var playerX = 60;
         var playerY = 100;
