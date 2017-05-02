@@ -205,7 +205,27 @@ var levels = [
         '  x  x             x',
         '  xo x  o      o   x',
         '  x!!xxxxxxxxxxxxxxx',
-    ],  
+    ],
+    ["xxxxxxxxxxxxxxxxxxxx", 
+     "x                  x", 
+     "x @      o         x", 
+     "x                  x", 
+     "x   o              x", 
+     "xxxxxxx            x", 
+     "x                  x", 
+     "x           o      x", 
+     "x                  x", 
+     "x    o    o        x",
+     "x                  x", 
+     "x                  x", 
+     "xo    xx           x", 
+     "xxx                x", 
+     "x                  x", 
+     "x   xx       o     x", 
+     "x                  x", 
+     "x       xx         x", 
+     "x                  x", 
+     "x!!!!!!!!!!!xxx!!!!x"]
 ];
 
 var currentLevel = 0;
