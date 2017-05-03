@@ -250,8 +250,7 @@ var levels = [
 ];
 var keyCD = {};
 
-var currentLevel = 0;
-var levelCreatorListenersInitialised = false;
+var currentLevel = 0
 var deaths = 0;
 var inUserLevel = false;
 
