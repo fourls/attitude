@@ -30,6 +30,27 @@ var userLevel = {
     array: []
 };
 var levels = [
+        
+    ["xxxxxxxxxxxxxxxxxxxx", 
+     "x             x    x", 
+     "x             x  @ x", 
+     "x                  x", 
+     "x o                x", 
+     "xxxxxx        xxxxxx", 
+     "x                  x", 
+     "x         o        x", 
+     "x        xxx       x", 
+     "x                  x", 
+     "x o              o x", 
+     "xxxxxx        xxxxxx", 
+     "x                  x", 
+     "x         o        x", 
+     "x        xxx       x", 
+     "x                  x", 
+     "x                  x", 
+     "x                  x", 
+     "x o              o x", 
+     "xxxxxx!!!xx!!!xxxxxx"],
     [
         'xxxxxxxxxxxxxxxxxxxx',
         'x@     !           x',
@@ -198,12 +219,12 @@ var levels = [
         'x  x               x',
         'x                  x',
         'x      xx    o     x',
-        'xxx  xxxx          x',
+        'xxx  xxx           x',
         '  x  x             x',
         '  x                x',
-        '  x        o       x',
+        '  x                x',
         '  x  x             x',
-        '  xo x  o      o   x',
+        '  xo x         o   x',
         '  x!!xxxxxxxxxxxxxxx',
     ],
     ["xxxxxxxxxxxxxxxxxxxx", 
@@ -225,7 +246,7 @@ var levels = [
      "x                  x", 
      "x       xx         x", 
      "x                  x", 
-     "x!!!!!!!!!!!xxx!!!!x"]
+     "x!!!!!!!!!!!xxx!!!!x"],
 ];
 var keyCD = {};
 
