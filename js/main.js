@@ -374,6 +374,7 @@ var levelCompleteState = {
         this.spacebar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         if(!inUserLevel) {
             currentLevel ++;
+            deaths = 0;
             if (currentLevel >= levels.length) {
                 game.state.start('end');
             }
