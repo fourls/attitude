@@ -335,6 +335,7 @@ var deathState = {
         setBackgroundColor("#3598db");
         game.add.existing(this.titleText);
         this.spacebar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+        this.keyQ = game.input.keyboard.addKey(Phaser.Keyboard.Q);
         if(inUserLevel) {
             
         } else {
@@ -355,6 +356,13 @@ var deathState = {
                 game.state.start("main");
             }
         }
+        if(this.keyQ.isDown) {
+            if(inUserLevel) {
+                game.state.start("levelCreator");
+            } else {
+                game.state.start("menu");
+            }
+        }
     }
 };
 var endState = {
@@ -372,9 +380,18 @@ var endState = {
         setBackgroundColor("#67b56d");
         game.add.existing(this.titleText);
         this.spacebar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+        this.keyQ = game.input.keyboard.addKey(Phaser.Keyboard.Q);
         this.spaceCd = 0;
+        currentLevel = 0;
     },
     update: function() {
+        if(this.keyQ.isDown) {
+            if(inUserLevel) {
+                game.state.start("levelCreator");
+            } else {
+                game.state.start("menu");
+            }
+        }
     }
 };
 var levelCompleteState = {
@@ -392,6 +409,7 @@ var levelCompleteState = {
         setBackgroundColor("#3598db");
         game.add.existing(this.titleText);
         this.spacebar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+        this.keyQ = game.input.keyboard.addKey(Phaser.Keyboard.Q);
         if(!inUserLevel) {
             currentLevel ++;
             deaths = 0;
@@ -407,6 +425,14 @@ var levelCompleteState = {
                 game.state.start("levelCreator");
             } else {
                 game.state.start("main");
+            }
+        }
+        
+        if(this.keyQ.isDown) {
+            if(inUserLevel) {
+                game.state.start("levelCreator");
+            } else {
+                game.state.start("menu");
             }
         }
     }
