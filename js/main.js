@@ -161,6 +161,7 @@ var levels = [
         'xo               o x',
         'x!!!!!!!!!!!!!!!xx!x',
     ],
+    ["xxxxxxxxxxxxxxxxxxxx", "x                  x", "x                 ox", "x                xxx", "x    x   x   x     x", "xx                 x", "x                  x", "x o                x", "xxxxxxx            x", "x@        xx       x", "x                  x", "x               o  x", "xxxxxx   xxxxxxxxxxx", "x    x             x", "x    x             x", "x  o x             x", "x xxxx             x", "x x                x", "x                o x", "xxxxxxxxx!!!!!!xxxxx"],
     [
         '!!!!!!!!!!!!!!!!!!!!',
         '!   @              !',
