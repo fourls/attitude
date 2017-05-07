@@ -72,3 +72,13 @@ kbd {
 #help-dialog li {
     margin: 5px;
 }
+
+#help-dialog a {
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#help-dialog a:hover {
+    color: #ddd;
+}
