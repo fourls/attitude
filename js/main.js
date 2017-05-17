@@ -3,6 +3,7 @@ function setBackgroundColor(color) {
     document.body.style.backgroundColor = color;
 }
 
+/*
 function goToLevel(lev) {
     if (lev -1 < levels.length) {
         currentLevel = lev - 1;
@@ -12,6 +13,7 @@ function goToLevel(lev) {
         console.log("Level " + lev.toString() + " does not exist.");
     }
 }
+*/
 
 function createMapFromArray (arr) {
     var returnArr = [];
