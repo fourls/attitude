@@ -15,6 +15,13 @@ function goToLevel(lev) {
 }
 */
 
+function saveLevelAjax(levelToSave) {
+    $.ajax({
+        url: "saveuserfile.php",
+        data: {"level":JSON.stringify(levelToSave)}
+    });
+}
+
 function createMapFromArray (arr) {
     var returnArr = [];
     for(var y = 0; y < arr.length; y++) {
