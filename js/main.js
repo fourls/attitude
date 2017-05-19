@@ -18,7 +18,7 @@ function goToLevel(lev) {
 function saveLevelAjax(levelToSave) {
     $.ajax({
         url: "saveuserfile.php",
-        data: {"level":JSON.stringify(levelToSave)}
+        data: {"level":JSON.stringify(levelToSave),"id":clientID}
     });
 }
 
@@ -33,6 +33,8 @@ function createMapFromArray (arr) {
     
     return returnArr;
 }
+
+var clientID = Math.floor(Math.random() * 1000000000000);
 
 var userLevel = {
     map: [],
