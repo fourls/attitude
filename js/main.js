@@ -27,6 +27,37 @@ function createMapFromArray (arr) {
     return returnArr;
 }
 
+/*
+
+
+
+*/
+
+function createCodeFromMap(arr) {
+    var code = '';
+    for(var y = 0; y < arr.length; y++) {
+        for(var x = 0; x < arr[y].length; x++) {
+            var item = '0';
+            switch (arr[y][x]) {
+                case 'x':
+                    item = '1';
+                    break;
+                case 'o':
+                    item = '2';
+                    break;
+                case '!':
+                    item = '3';
+                    break;
+                case '@':
+                    item = '4';
+                    break;
+            }
+            code += item;
+        }
+    }
+    return code;
+}
+
 var userLevel = {
     map: [],
     array: []
