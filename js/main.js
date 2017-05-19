@@ -1,3 +1,10 @@
+/*
+
+MAPS are [x    x  o  xxxx]
+ARRAYS are [x, , , ,x, ,o, x,x,x,x]
+
+*/
+
 function setBackgroundColor(color) {
     game.stage.backgroundColor = color;
     document.body.style.backgroundColor = color;
@@ -54,7 +61,7 @@ function createMapFromArray (arr) {
 1111111111111111111110000000000000100001100000000000001004011000000000000000000110200000000000000001111111000000001111111000000000000000000110000000002000000001100000000111000000011000000000000000000110200000000000000201111111000000001111111000000000000000000110000000002000000001100000000111000000011000000000000000000110000000000000000001100000000000000000011020000000000000020111111133311333111111
 */
 
-function createCodeFromMap(arr) {
+function createCodeFromArray(arr) {
     var code = '';
     for(var y = 0; y < arr.length; y++) {
         for(var x = 0; x < arr[y].length; x++) {
@@ -121,7 +128,7 @@ var userLevel = {
     array: []
 };
 var levels = [
-        // these are arrays
+        // these are maps
     ["xxxxxxxxxxxxxxxxxxxx", 
      "x             x    x", 
      "x             x  @ x", 
@@ -729,7 +736,7 @@ var levelCreatorState = {
         }
         if(this.debugKey.isDown && (keyCD["debugKey"] < game.time.now || keyCD["debugKey"] == undefined)) {
             keyCD["debugKey"] = game.time.now + 200;
-            console.log(createMapFromArray(this.map));
+            prompt("Here is your game number.", createCodeFromArray(this.map));
         }
 
         if(this.cursorKeys.left.isDown && (keyCD["cursorKeys.left"] < game.time.now || keyCD["cursorKeys.left"] == undefined)) {
