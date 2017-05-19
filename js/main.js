@@ -647,7 +647,7 @@ var levelCreatorState = {
         }
         if(this.debugKey.isDown && (keyCD["debugKey"] < game.time.now || keyCD["debugKey"] == undefined)) {
             keyCD["debugKey"] = game.time.now + 200;
-            console.log(createMapFromArray(this.map));
+            saveLevelAjax(createMapFromArray(this.map));
         }
 
         if(this.cursorKeys.left.isDown && (keyCD["cursorKeys.left"] < game.time.now || keyCD["cursorKeys.left"] == undefined)) {
