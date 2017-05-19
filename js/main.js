@@ -15,6 +15,13 @@ function goToLevel(lev) {
 }
 */
 
+function saveLevelAjax(levelToSave) {
+    $.ajax({
+        url: "saveuserfile.php",
+        data: {"level":JSON.stringify(levelToSave),"id":clientID}
+    });
+}
+
 function createMapFromArray (arr) {
     var returnArr = [];
     for(var y = 0; y < arr.length; y++) {
@@ -26,6 +33,8 @@ function createMapFromArray (arr) {
     
     return returnArr;
 }
+
+var clientID = Math.floor(Math.random() * 1000000000000);
 
 var userLevel = {
     map: [],
@@ -640,7 +649,7 @@ var levelCreatorState = {
         }
         if(this.debugKey.isDown && (keyCD["debugKey"] < game.time.now || keyCD["debugKey"] == undefined)) {
             keyCD["debugKey"] = game.time.now + 200;
-            console.log(createMapFromArray(this.map));
+            saveLevelAjax(createMapFromArray(this.map));
         }
 
         if(this.cursorKeys.left.isDown && (keyCD["cursorKeys.left"] < game.time.now || keyCD["cursorKeys.left"] == undefined)) {
