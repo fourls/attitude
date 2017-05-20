@@ -620,10 +620,12 @@ var mainState = {
         
         this.player = game.add.sprite(playerX,playerY,'player');
         this.player.body.gravity.y = 1200;
+
+        this.coins.setAll('body.mass',0);
     },
     update: function() {
         game.physics.arcade.collide(this.player,this.walls);
-        game.physics.arcade.collide(this.player,this.coins, this.takeCoin, null, this);
+        game.physics.arcade.collide(this.player,this.coins, null, this.takeCoin, this);
         game.physics.arcade.collide(this.player,this.enemies, this.death, null, this);
         
         
@@ -656,6 +658,7 @@ var mainState = {
     takeCoin: function(player,coin) {
         coin.kill();
         this.player.body.touching.down = false;
+        return false;
     },
     death: function() {
         game.state.start('death');
