@@ -145,8 +145,8 @@ var beginningState = {
 };
 var loadingState = {
     preload: function() {
-        //var loadingBar = game.add.sprite(game.world.centerX - (100/2), game.world.centerX - (20/2), "loading");
-        //this.load.setPreloadSprite(loadingBar);
+        var loadingBar = game.add.sprite(game.world.centerX - (100/2), game.world.centerX - (20/2), "loading");
+        this.load.setPreloadSprite(loadingBar);
         setBackgroundColor("#3598db");
         
         game.load.image('player','assets/player.png');
