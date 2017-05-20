@@ -522,12 +522,14 @@ var levelCreatorState = {
         if(this.openKey.isDown && (keyCD["openKey"] < game.time.now || keyCD["openKey"] == undefined)) {
             keyCD["openKey"] = game.time.now + 200;
             levelNo = prompt("Enter your game number.");
-            if(levelNo.length == 400) {
-                inUserLevel = true;
-                userLevel["array"] = createArrayFromCode(levelNo);
-                game.state.start("levelCreator");
-            } else {
-                alert("Game number was invalid.");
+            if(levelNo != false) {
+                if(levelNo.length == 400) {
+                    inUserLevel = true;
+                    userLevel["array"] = createArrayFromCode(levelNo);
+                    game.state.start("levelCreator");
+                } else {
+                    alert("Game number was invalid.");
+                }
             }
         }
         if(this.cursorKeys.left.isDown && (keyCD["cursorKeys.left"] < game.time.now || keyCD["cursorKeys.left"] == undefined)) {
