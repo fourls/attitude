@@ -1,3 +1,10 @@
+/*
+
+MAPS are [x    x  o  xxxx]
+ARRAYS are [x, , , ,x, ,o, x,x,x,x]
+
+*/
+
 function setBackgroundColor(color) {
     game.stage.backgroundColor = color;
     document.body.style.backgroundColor = color;
@@ -27,230 +34,99 @@ function createMapFromArray (arr) {
     return returnArr;
 }
 
+/*
+
+    20x20 array
+    
+    11111111111111111111
+    10000000000000100001
+    10000000000000100401
+    10000000000000000001
+    10200000000000000001
+    11111100000000111111
+    10000000000000000001
+    10000000002000000001
+    10000000011100000001
+    10000000000000000001
+    10200000000000000201
+    11111100000000111111
+    10000000000000000001
+    10000000002000000001
+    10000000011100000001
+    10000000000000000001
+    10000000000000000001
+    10000000000000000001
+    10200000000000000201
+    11111133311333111111 
+1111111111111111111110000000000000100001100000000000001004011000000000000000000110200000000000000001111111000000001111111000000000000000000110000000002000000001100000000111000000011000000000000000000110200000000000000201111111000000001111111000000000000000000110000000002000000001100000000111000000011000000000000000000110000000000000000001100000000000000000011020000000000000020111111133311333111111
+*/
+
+function createCodeFromArray(arr) {
+    var code = '';
+    for(var y = 0; y < arr.length; y++) {
+        for(var x = 0; x < arr[y].length; x++) {
+            var item = '0';
+            switch (arr[y][x]) {
+                case 'x':
+                    item = '1';
+                    break;
+                case 'o':
+                    item = '2';
+                    break;
+                case '!':
+                    item = '3';
+                    break;
+                case '@':
+                    item = '4';
+                    break;
+            }
+            code += item;
+        }
+    }
+    return code;
+}
+
+function createArrayFromCode(code) {
+
+    codeArr = (code).split("").map(Number);
+    if(codeArr.length != 400) {
+        return codeArr;
+    }
+    returnArr = [];
+    for(var i = 0; i < codeArr.length; i++) {
+        y = Math.floor(i / 20);
+        x = i - (y * 20);
+
+        if(x == 0) {
+            returnArr[y] = [];
+        }
+
+        var item = ' ';
+        switch (codeArr[i]) {
+            case 1:
+                item = 'x';
+                break;
+            case 2:
+                item = 'o';
+                break;
+            case 3:
+                item = '!';
+                break;
+            case 4:
+                item = '@';
+                break;
+        }
+
+        returnArr[y][x] = item;
+    }
+
+    return returnArr;
+}
+
 var userLevel = {
     map: [],
     array: []
 };
-var levels = [
-        
-    ["xxxxxxxxxxxxxxxxxxxx", 
-     "x             x    x", 
-     "x             x  @ x", 
-     "x                  x", 
-     "x o                x", 
-     "xxxxxx        xxxxxx", 
-     "x                  x", 
-     "x         o        x", 
-     "x        xxx       x", 
-     "x                  x", 
-     "x o              o x", 
-     "xxxxxx        xxxxxx", 
-     "x                  x", 
-     "x         o        x", 
-     "x        xxx       x", 
-     "x                  x", 
-     "x                  x", 
-     "x                  x", 
-     "x o              o x", 
-     "xxxxxx!!!xx!!!xxxxxx"],
-    [
-        'xxxxxxxxxxxxxxxxxxxx',
-        'x@     !           x',
-        'x                  x',
-        'x      o           x',
-        'x                  x',
-        'x      !    o      x',
-        'xxxxxxxx           x',
-        'x                  x',
-        'xo                 x',
-        'xx                 x',
-        'x                  x',
-        'x      x      o    x',
-        'x                  x',
-        'xx                 x',
-        'x     o            x',
-        'x    xxxx          x',
-        'x    x  x          x',
-        'x  xxx             x',
-        'x              o   x',
-        'xxxxxxxxx!!!!!!x!!!x',
-    ],
-    [
-        'xxxxxxxxxxxxxxxxxxxx',
-        'x                  x',
-        'x        o         x',
-        'x                  x',
-        'x                  x',
-        'x       xxxx       x',
-        'x    o        o    x',
-        'x    x        x    x',
-        'xxx      @       xxx',
-        'x       xxxx       x',
-        'x                  x',
-        'x   !!!! o  !!!!   x',
-        'x        x         x',
-        'x                  x',
-        'x        xx        x',
-        'x     x      x     x',
-        'xxx              xxx',
-        'x                  x',
-        'x         o        x',
-        'xxxxxxxxxxxxxxxxxxxx',
-    ],
-    [
-        'xxxxxxxxxxxxxxxxxxxx',
-        'x         x        x',
-        'x   x         o    x',
-        'x      xxxxxxxxxxxxx',
-        'xx                 x',
-        'x     o            x',
-        'x                  x',
-        'xxx!!!!       o    x',
-        'x        xxxxxxxx!!x',
-        'x                  x',
-        'x                  x',
-        'x  xxxxxx o        x',
-        'x       x!!!x      x',
-        'x   o   x   x      x',
-        'x           xxx    x',
-        'xxxxxxxxx   x      x',
-        'x                xxx',
-        'x                  x',
-        'x @                x',
-        'xxxxxxxxxxxxxxxxxxxx',
-    ],
-    [
-        'xxxxxxxxxxxxxxxxxxxx',
-        'x                  x',
-        'x    xxxxxxxxx     x',
-        'x o  x         o   x',
-        'xxxxxx             x',
-        'x                xxx',
-        'x          o       x',
-        'x    xxxxxxxxxxxxxxx',
-        'x        @         x',
-        'xx                 x',
-        'x                  x',
-        'x            o     x',
-        'xxxxxxx            x',
-        'x                  x',
-        'x!!!!!!!!!!!  !!!!!x',
-        'x                  x',
-        'x    o             x',
-        'x                  x',
-        'x           o      x',
-        'xxxxxxxxxxxxxxxxxxxx',
-    ],
-    [
-        'xxxxxxxxxxxxxxxxxxxx',
-        'x   @x             x',
-        'x xxxx   o         x',
-        'x       xxx        x',
-        'x                  x',
-        'x!xxxx           o x',
-        'x              xxxxx',
-        'x    o             x',
-        'x  xxxxxx          x',
-        'x                  x',
-        'x                  x',
-        'x                  x',
-        'xx                 x',
-        'x                  x',
-        'x   o              x',
-        'x   x              x',
-        'x       xxxxx      x',
-        'x                  x',
-        'xo               o x',
-        'x!!!!!!!!!!!!!!!xx!x',
-    ],
-    ["xxxxxxxxxxxxxxxxxxxx", "x                  x", "x                 ox", "x                xxx", "x    x   x   x     x", "xx                 x", "x                  x", "x o                x", "xxxxxxx            x", "x@        xx       x", "x                  x", "x               o  x", "xxxxxx   xxxxxxxxxxx", "x    x             x", "x    x             x", "x  o x             x", "x xxxx             x", "x x                x", "x                o x", "xxxxxxxxx!!!!!!xxxxx"],
-    [
-        '!!!!!!!!!!!!!!!!!!!!',
-        '!   @              !',
-        '!                  !',
-        '!                  !',
-        '!                  !',
-        '!    o             !',
-        '!    x     o       !',
-        '!                  !',
-        '!                  !',
-        '!             o    !',
-        '!             x    !',
-        '!                  !',
-        '!       x          !',
-        '!o                 !',
-        '!x                 !',
-        '!    o             !',
-        '!                  !',
-        '!                  !',
-        '!       o          !',
-        '!!!!!!!!!!!!!!!!!!!!',
-    ],
-    [
-        'xxxxxxxxxxxxxxxxxxxx',
-        'x@ xo      xo     ox',
-        'xx xx      x       x',
-        'x   x              x',
-        'x x x  xxxxxxxxxxxxx',
-        'x x                x',
-        'x xxxxxxxx  xxxxxxxx',
-        'x   ox             x',
-        'xxx  x             x',
-        'x                  x',
-        'x                  x',
-        'xx                 x',
-        'xxxxx     o        x',
-        'x        xxxx      x',
-        'x     o            x',
-        'x                  x',
-        'x      o           x',
-        'x                  x',
-        'x o              o x',
-        'xxxxxxxxxxxxxxxxxxxx',
-    ],
-    [
-        '           xxxxxxxxx',
-        '           x      @x',
-        '           x o     x',
-        '           x       x',
-        'xxxxxxxxxxxx  xxxxxx',
-        'x             x     ',
-        'x      o      x     ',
-        'x             x     ',
-        'x  xxxxxxxxxxxxxxxxx',
-        'x  xo   x          x',
-        'x  x               x',
-        'x                  x',
-        'x      xx    o     x',
-        'xxx  xxx           x',
-        '  x  x             x',
-        '  x                x',
-        '  x                x',
-        '  x  x             x',
-        '  xo x         o   x',
-        '  x!!xxxxxxxxxxxxxxx',
-    ],
-    ["xxxxxxxxxxxxxxxxxxxx", 
-     "x                  x", 
-     "x @      o         x", 
-     "x                  x", 
-     "x   o              x", 
-     "xxxxxxx            x", 
-     "x                  x", 
-     "x           o      x", 
-     "x                  x", 
-     "x    o    o        x",
-     "x                  x", 
-     "x                  x", 
-     "xo    xx           x", 
-     "xxx                x", 
-     "x                  x", 
-     "x   xx       o     x", 
-     "x                  x", 
-     "x       xx         x", 
-     "x                  x", 
-     "x!!!!!!!!!!!xxx!!!!x"],
-];
 var keyCD = {};
 
 var currentLevel = 0
@@ -495,7 +371,8 @@ var levelCreatorState = {
         this.enemyKey = game.input.keyboard.addKey(Phaser.Keyboard.D);
         this.playerKey = game.input.keyboard.addKey(Phaser.Keyboard.S);
         this.deleteKey = game.input.keyboard.addKey(Phaser.Keyboard.E);
-        this.debugKey = game.input.keyboard.addKey(Phaser.Keyboard.H);
+        this.debugKey = game.input.keyboard.addKey(Phaser.Keyboard.R);
+        this.openKey = game.input.keyboard.addKey(Phaser.Keyboard.T);
         this.submitKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         this.keyQ = game.input.keyboard.addKey(Phaser.Keyboard.Q);
         this.cursorKeys = game.input.keyboard.createCursorKeys();
@@ -640,9 +517,19 @@ var levelCreatorState = {
         }
         if(this.debugKey.isDown && (keyCD["debugKey"] < game.time.now || keyCD["debugKey"] == undefined)) {
             keyCD["debugKey"] = game.time.now + 200;
-            console.log(createMapFromArray(this.map));
+            prompt("Here is your game number.", createCodeFromArray(this.map));
         }
-
+        if(this.openKey.isDown && (keyCD["openKey"] < game.time.now || keyCD["openKey"] == undefined)) {
+            keyCD["openKey"] = game.time.now + 200;
+            levelNo = prompt("Enter your game number.");
+            if(levelNo.length == 400) {
+                inUserLevel = true;
+                userLevel["array"] = createArrayFromCode(levelNo);
+                game.state.start("levelCreator");
+            } else {
+                alert("Game number was invalid.");
+            }
+        }
         if(this.cursorKeys.left.isDown && (keyCD["cursorKeys.left"] < game.time.now || keyCD["cursorKeys.left"] == undefined)) {
             keyCD["cursorKeys.left"] = game.time.now + 200;
             if (this.cursor[0] > 0) {
@@ -701,7 +588,7 @@ var mainState = {
         
         // 20x20 level 
         
-        var level = levels[currentLevel];
+        var level = createMapFromArray(createArrayFromCode(levels[currentLevel]));
         if (inUserLevel) {
             level = userLevel["map"];
         }
