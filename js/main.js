@@ -371,7 +371,8 @@ var levelCreatorState = {
         this.enemyKey = game.input.keyboard.addKey(Phaser.Keyboard.D);
         this.playerKey = game.input.keyboard.addKey(Phaser.Keyboard.S);
         this.deleteKey = game.input.keyboard.addKey(Phaser.Keyboard.E);
-        this.debugKey = game.input.keyboard.addKey(Phaser.Keyboard.H);
+        this.debugKey = game.input.keyboard.addKey(Phaser.Keyboard.R);
+        this.openKey = game.input.keyboard.addKey(Phaser.Keyboard.T);
         this.submitKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         this.keyQ = game.input.keyboard.addKey(Phaser.Keyboard.Q);
         this.cursorKeys = game.input.keyboard.createCursorKeys();
@@ -518,7 +519,17 @@ var levelCreatorState = {
             keyCD["debugKey"] = game.time.now + 200;
             prompt("Here is your game number.", createCodeFromArray(this.map));
         }
-
+        if(this.openKey.isDown && (keyCD["openKey"] < game.time.now || keyCD["openKey"] == undefined)) {
+            keyCD["openKey"] = game.time.now + 200;
+            levelNo = prompt("Enter your game number.");
+            if(levelNo.length == 400) {
+                inUserLevel = true;
+                userLevel["array"] = createArrayFromCode(levelNo);
+                game.state.start("levelCreator");
+            } else {
+                alert("Game number was invalid.");
+            }
+        }
         if(this.cursorKeys.left.isDown && (keyCD["cursorKeys.left"] < game.time.now || keyCD["cursorKeys.left"] == undefined)) {
             keyCD["cursorKeys.left"] = game.time.now + 200;
             if (this.cursor[0] > 0) {
