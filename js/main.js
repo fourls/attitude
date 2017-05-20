@@ -577,7 +577,7 @@ var mainState = {
         
         // 20x20 level 
         
-        var level = levels[currentLevel];
+        var level = createMapFromArray(createArrayFromCode(levels[currentLevel]));
         if (inUserLevel) {
             level = userLevel["map"];
         }
