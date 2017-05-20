@@ -137,6 +137,7 @@ var beginningState = {
     preload: function() {
         setBackgroundColor("#3598db");
         game.load.image('loading', 'assets/loading.png');
+        game.load.image('loading-bg', 'assets/loading-bg.png');
     },
     create: function() {
         game.state.add("loading", loadingState);
@@ -145,7 +146,8 @@ var beginningState = {
 };
 var loadingState = {
     preload: function() {
-        var loadingBar = game.add.sprite(game.world.centerX - (100/2), game.world.centerX - (20/2), "loading");
+        game.add.sprite(game.world.centerX - (440/2), game.world.centerY - (20/2), "loading-bg");
+        var loadingBar = game.add.sprite(game.world.centerX - (440/2), game.world.centerY - (20/2), "loading");
         this.load.setPreloadSprite(loadingBar);
         setBackgroundColor("#3598db");
         
