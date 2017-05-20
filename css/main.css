@@ -19,12 +19,51 @@ canvas {
 kbd { 
     background-color: #245a76;
     border-radius: 4px; 
-    padding: 2px 5px; 
-    margin: 2px; 
+    padding: 1px 5px; 
     color: #fff; 
     text-decoration: none; 
     font-family: monospace;
+    font-size: 14px;
 }
+
+#context-dialog {
+    z-index: 0;
+    position: fixed;
+    top: 50%;
+    margin-top: 220px;
+    left: 50%;
+    margin-left: -150px;
+    width: 300px;
+    padding: 10px;
+    border-top: 2px solid white;
+    font-size: 16px;
+    cursor: default;
+}
+
+#context-contents {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    opacity: 0;
+    transition: opacity 0.3s linear;
+    -webkit-transition: opacity 0.3s linear;
+    -moz-transition: opacity 0.3s linear;
+    -o-transition: opacity 0.3s linear;
+    -ms-transition: opacity 0.3s linear;
+}
+#context-dialog:hover #context-contents {
+    opacity: 1;
+}
+
+#context-dialog table {
+    width: 100%;
+}
+
+#context-dialog td {
+    width: 50%;
+}
+
 #help-dialog {
     z-index: 0;
     position: fixed;
