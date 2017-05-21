@@ -5,6 +5,21 @@ ARRAYS are [x, , , ,x, ,o, x,x,x,x]
 
 */
 
+function setDialog(currentLoc) {
+    $("#context-dialog .contents").css("display","none");
+    switch (currentLoc) {
+        case 'main':
+            $("#context-dialog .contents#main").css("display","block");
+            break;
+        case 'levelCreator':
+            $("#context-dialog .contents#levelcreator").css("display","block");
+            break;
+        case 'menu':
+            $("#context-dialog .contents#levelcreator").css("display","block");
+            break;
+    }
+}
+
 function setBackgroundColor(color) {
     game.stage.backgroundColor = color;
     document.body.style.backgroundColor = color;
