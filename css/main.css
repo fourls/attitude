@@ -40,27 +40,34 @@ kbd {
     cursor: default;
 }
 
-#context-contents {
+#context-dialog .contents {
     width: 100%;
     height: 100%;
     margin: 0;
     padding: 0;
     opacity: 0;
+    display: none;
     transition: opacity 0.3s linear;
     -webkit-transition: opacity 0.3s linear;
     -moz-transition: opacity 0.3s linear;
     -o-transition: opacity 0.3s linear;
     -ms-transition: opacity 0.3s linear;
 }
-#context-dialog:hover #context-contents {
+#context-dialog:hover .contents {
     opacity: 1;
 }
 
-#context-dialog table {
+.contents table {
+    width: initial;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.contents td {
     width: 100%;
 }
 
-#context-dialog td {
+.contents#levelcreator td {
     width: 50%;
 }
 
