@@ -43,8 +43,8 @@ kbd {
     position: fixed;
     bottom: 10px;
     left: 50%;
-    margin-left: -150px;
-    width: 300px;
+    margin-left: -200px;
+    width: 400px;
     box-sizing: border-box;
     padding: 10px 30px;
     border-bottom: 2px solid white;
@@ -92,6 +92,10 @@ kbd {
 
 .contents#levelcreator td {
     width: 50%;
+}
+
+.contents#levelcreator td.full {
+    width: 100%;
 }
 
 #help-dialog {
