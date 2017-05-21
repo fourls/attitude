@@ -201,8 +201,8 @@ var loadingState = {
         game.load.image('enemy','assets/enemy.png');
         game.load.image('select','assets/select.png');
         game.load.image('outline','assets/outline.png');
-        game.load.image('door','assets/door.png');
-        game.load.image('switch','assets/switch.png');
+        game.load.spritesheet('door','assets/door.png', 20, 20);
+        game.load.spritesheet('switch','assets/switch.png', 20, 20);
     },
     create: function() {
         game.state.add('main', mainState);
@@ -519,9 +519,11 @@ var levelCreatorState = {
                         this.buildingBlocks.add(player);
                     } else if (this.map[i][j] == 's') {
                         var _switch = game.add.sprite(20+20*j,20+20*i,'switch');
+                        _switch.frame = 0;
                         this.buildingBlocks.add(_switch);
                     } else if (this.map[i][j] == 'd') {
                         var door = game.add.sprite(20+20*j,20+20*i,'door');
+                        door.frame = 0;
                         this.buildingBlocks.add(door);
                     }
                 }
@@ -682,11 +684,13 @@ var mainState = {
                     this.switches.add(_switch);
                     _switch.isActiveSwitch = true;
                     _switch.body.immovable = true;
+                    _switch.frame = 0;
                 } else if (level[i][j] == 'd') {
                     var door = game.add.sprite(20+20*j,20+20*i,'door');
                     this.doors.add(door);
                     door.isActiveDoor = true;
                     door.body.immovable = true;
+                    door.frame = 0;
                 }
             }
         }
@@ -743,8 +747,10 @@ var mainState = {
 
         console.log("switch activated");
         _switch.isActiveSwitch = false;
+        _switch.frame = 1;
         for(var i = 0; i < this.doors.children.length; i++) {
             this.doors.children[i].isActiveDoor = !(this.doors.children[i].isActiveDoor);
+            this.doors.children[i].frame = this.doors.children[i].isActiveDoor ? 0 : 1;
         }
         return false;
     },
