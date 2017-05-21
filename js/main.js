@@ -13,7 +13,20 @@ function showTutorial() {
     setTimeout(function(){
         tutorialShowing = false;
         $(".tutorial").fadeTo(300,0);
-        setDialog('menu');
+        switch (game.state.current) {
+            case 'main':
+                setDialog('main');
+                break;
+            case 'menu':
+                setDialog('menu');
+                break;
+            case 'levelCreator':
+                setDialog('levelCreator');
+                break;
+            default:
+                setDialog('between');
+                break;
+        }
     },2000);
 }
 
