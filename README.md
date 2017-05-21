@@ -1,7 +1,7 @@
 # attitude
 A quick platformer made in HTML5 using the Phaser game engine.
 
-Play it now [here](https://rofwell.github.io/attitude).
+Play it now at [rofwell.github.io/attitude](https://rofwell.github.io/attitude)
 
 ## about the game
 The aim of this game is to achieve the best possible attitude. To improve your attitude, pass a level. If you fail too often, your attitude will suffer!
@@ -34,5 +34,7 @@ Press **b** on the start screen to access the level creator.
 | s               | place player  |
 | d               | place a hazard|
 | e               | delete        |
+| r               | get gamecode  |
+| t               | open gamecode |
 | space           | play level    |
 | q               | exit          |
