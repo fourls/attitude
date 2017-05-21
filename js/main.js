@@ -111,6 +111,12 @@ function createCodeFromArray(arr) {
                 case '@':
                     item = '4';
                     break;
+                case 's':
+                    item = '5';
+                    break;
+                case 'd':
+                    item = '6';
+                    break;
             }
             code += item;
         }
@@ -146,6 +152,12 @@ function createArrayFromCode(code) {
                 break;
             case 4:
                 item = '@';
+                break;
+            case 5:
+                item = 's';
+                break;
+            case 6:
+                item = 'd';
                 break;
         }
 
@@ -189,6 +201,8 @@ var loadingState = {
         game.load.image('enemy','assets/enemy.png');
         game.load.image('select','assets/select.png');
         game.load.image('outline','assets/outline.png');
+        game.load.image('door','assets/door.png');
+        game.load.image('switch','assets/switch.png');
     },
     create: function() {
         game.state.add('main', mainState);
@@ -503,6 +517,12 @@ var levelCreatorState = {
                     } else if (this.map[i][j] == '@') {
                         var player = game.add.sprite(20+20*j,20+20*i,'player');
                         this.buildingBlocks.add(player);
+                    } else if (this.map[i][j] == 's') {
+                        var _switch = game.add.sprite(20+20*j,20+20*i,'switch');
+                        this.buildingBlocks.add(_switch);
+                    } else if (this.map[i][j] == 'd') {
+                        var door = game.add.sprite(20+20*j,20+20*i,'door');
+                        this.buildingBlocks.add(door);
                     }
                 }
             }
@@ -629,6 +649,8 @@ var mainState = {
         this.walls = game.add.group(); // x
         this.coins = game.add.group(); // o
         this.enemies = game.add.group(); // !
+        this.switches = game.add.group(); // s
+        this.doors = game.add.group(); // d
         
         // 20x20 level 
         
@@ -651,9 +673,20 @@ var mainState = {
                 } else if (level[i][j] == '!') {
                     var enemy = game.add.sprite(20+20*j,20+20*i,'enemy');
                     this.enemies.add(enemy);
+                    enemy.body.immovable = true;
                 } else if (level[i][j] == '@') {
                     playerX = 20+20*j;
                     playerY = 20+20*i;
+                } else if (level[i][j] == 's') {
+                    var _switch = game.add.sprite(20+20*j,20+20*i,'switch');
+                    this.switches.add(_switch);
+                    _switch.isActiveSwitch = true;
+                    _switch.body.immovable = true;
+                } else if (level[i][j] == 'd') {
+                    var door = game.add.sprite(20+20*j,20+20*i,'door');
+                    this.doors.add(door);
+                    door.isActiveDoor = true;
+                    door.body.immovable = true;
                 }
             }
         }
@@ -667,6 +700,8 @@ var mainState = {
     },
     update: function() {
         game.physics.arcade.collide(this.player,this.walls);
+        game.physics.arcade.collide(this.player,this.doors, null, this.checkDoorCollision, this);
+        game.physics.arcade.collide(this.player,this.switches, null, this.activateSwitch, this);
         game.physics.arcade.collide(this.player,this.coins, null, this.takeCoin, this);
         game.physics.arcade.collide(this.player,this.enemies, this.death, null, this);
         
@@ -700,6 +735,23 @@ var mainState = {
     takeCoin: function(player,coin) {
         coin.kill();
         this.player.body.touching.down = false;
+        return false;
+    },
+    activateSwitch: function(player, _switch) {
+        if(_switch.isActiveSwitch == false)
+            return false;
+
+        console.log("switch activated");
+        _switch.isActiveSwitch = false;
+        for(var i = 0; i < this.doors.children.length; i++) {
+            this.doors.children[i].isActiveDoor = !(this.doors.children[i].isActiveDoor);
+        }
+        return false;
+    },
+    checkDoorCollision: function(player, door) {
+        if(door.isActiveDoor)
+            return true;
+        
         return false;
     },
     death: function() {
