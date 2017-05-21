@@ -17,6 +17,9 @@ function setDialog(currentLoc) {
         case 'menu':
             $("#context-dialog .contents#menu").css("display","block");
             break;
+        case 'between':
+            $("#context-dialog .contents#between").css("display","block");
+            break;
     }
 }
 
