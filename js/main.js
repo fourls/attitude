@@ -15,7 +15,7 @@ function setDialog(currentLoc) {
             $("#context-dialog .contents#levelcreator").css("display","block");
             break;
         case 'menu':
-            $("#context-dialog .contents#levelcreator").css("display","block");
+            $("#context-dialog .contents#menu").css("display","block");
             break;
     }
 }
