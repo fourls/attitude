@@ -682,7 +682,7 @@ var mainState = {
                 } else if (level[i][j] == 's') {
                     var _switch = game.add.sprite(20+20*j,20+20*i,'switch');
                     this.switches.add(_switch);
-                    _switch.isActiveSwitch = true;
+                    _switch.isActiveSwitch = game.time.now - 1000;
                     _switch.body.immovable = true;
                     _switch.frame = 0;
                 } else if (level[i][j] == 'd') {
@@ -742,12 +742,11 @@ var mainState = {
         return false;
     },
     activateSwitch: function(player, _switch) {
-        if(_switch.isActiveSwitch == false)
+        if(game.time.now < _switch.isActiveSwitch)
             return false;
 
-        console.log("switch activated");
-        _switch.isActiveSwitch = false;
-        _switch.frame = 1;
+        _switch.isActiveSwitch = game.time.now + 1000;
+        //_switch.frame = _switch.frame == 1 ? 0 : 1;
         for(var i = 0; i < this.doors.children.length; i++) {
             this.doors.children[i].isActiveDoor = !(this.doors.children[i].isActiveDoor);
             this.doors.children[i].frame = this.doors.children[i].isActiveDoor ? 0 : 1;
