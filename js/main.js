@@ -207,6 +207,7 @@ var gameMenuState = {
         //game.add.existing(this.levCreText);
         this.spacebar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         this.b = game.input.keyboard.addKey(Phaser.Keyboard.B);
+        setDialog('menu');
     },
     update: function() {
         if(this.spacebar.isDown) {
@@ -243,6 +244,7 @@ var deathState = {
                 currentLevel = 0;
             }
         }
+        setDialog('menu');
     },
     update: function() {
         if(this.spacebar.isDown) {
@@ -279,6 +281,7 @@ var endState = {
         this.keyQ = game.input.keyboard.addKey(Phaser.Keyboard.Q);
         this.spaceCd = 0;
         currentLevel = 0;
+        setDialog('menu');
     },
     update: function() {
         if(this.keyQ.isDown) {
@@ -314,6 +317,8 @@ var levelCompleteState = {
             }
         } else {
         }
+
+        setDialog('menu');
     },
     update: function() {
         if(this.spacebar.isDown) {
@@ -490,6 +495,9 @@ var levelCreatorState = {
         this.cursorSprite = game.add.sprite(20,20,'select');
         this.selectGroup = game.add.group();
         this.selectGroup.add(this.cursorSprite);
+
+
+        setDialog('levelCreator');
     },
     update: function() {
         if(this.wallKey.isDown && (keyCD["wallKey"] < game.time.now || keyCD["wallKey"] == undefined)) {
@@ -637,6 +645,8 @@ var mainState = {
         this.player.body.gravity.y = 1200;
 
         this.coins.setAll('body.mass',0);
+
+        setDialog('main');
     },
     update: function() {
         game.physics.arcade.collide(this.player,this.walls);
