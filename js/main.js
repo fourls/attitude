@@ -423,11 +423,17 @@ var levelCreatorState = {
         this.coinKey = game.input.keyboard.addKey(Phaser.Keyboard.A);
         this.enemyKey = game.input.keyboard.addKey(Phaser.Keyboard.D);
         this.playerKey = game.input.keyboard.addKey(Phaser.Keyboard.S);
+        this.switchKey = game.input.keyboard.addKey(Phaser.Keyboard.Z);
+        this.doorKey = game.input.keyboard.addKey(Phaser.Keyboard.X);
+
         this.deleteKey = game.input.keyboard.addKey(Phaser.Keyboard.E);
+
         this.debugKey = game.input.keyboard.addKey(Phaser.Keyboard.R);
         this.openKey = game.input.keyboard.addKey(Phaser.Keyboard.T);
+
         this.submitKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         this.keyQ = game.input.keyboard.addKey(Phaser.Keyboard.Q);
+
         this.cursorKeys = game.input.keyboard.createCursorKeys();
         
         /*
@@ -544,7 +550,6 @@ var levelCreatorState = {
             this.map[this.cursor[1]][this.cursor[0]] = "x";
             this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'wall'));
         }
-        
         if(this.coinKey.isDown && (keyCD["coinKey"] < game.time.now || keyCD["coinKey"] == undefined)) {
             keyCD["coinKey"] = game.time.now + 150;
             this.map[this.cursor[1]][this.cursor[0]] = "o";
@@ -559,6 +564,16 @@ var levelCreatorState = {
             keyCD["playerKey"] = game.time.now + 150;
             this.map[this.cursor[1]][this.cursor[0]] = "@";
             this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'player'));
+        }
+        if(this.switchKey.isDown && (keyCD["switchKey"] < game.time.now || keyCD["switchKey"] == undefined)) {
+            keyCD["switchKey"] = game.time.now + 150;
+            this.map[this.cursor[1]][this.cursor[0]] = "s";
+            this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'switch'));
+        }
+        if(this.doorKey.isDown && (keyCD["doorKey"] < game.time.now || keyCD["doorKey"] == undefined)) {
+            keyCD["doorKey"] = game.time.now + 150;
+            this.map[this.cursor[1]][this.cursor[0]] = "d";
+            this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'door'));
         }
         if(this.deleteKey.isDown && (keyCD["deleteKey"] < game.time.now || keyCD["deleteKey"] == undefined)) {
             keyCD["deleteKey"] = game.time.now + 150;
