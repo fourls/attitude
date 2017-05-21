@@ -5,21 +5,35 @@ ARRAYS are [x, , , ,x, ,o, x,x,x,x]
 
 */
 
+var tutorialShowing = false;
+
+function showTutorial() {
+    $(".tutorial").fadeTo(300,1);
+    tutorialShowing = true;
+    setTimeout(function(){
+        tutorialShowing = false;
+        $(".tutorial").fadeTo(300,0);
+        setDialog('menu');
+    },2000);
+}
+
 function setDialog(currentLoc) {
     $("#context-dialog .contents").css("display","none");
-    switch (currentLoc) {
-        case 'main':
-            $("#context-dialog .contents#main").css("display","block");
-            break;
-        case 'levelCreator':
-            $("#context-dialog .contents#levelcreator").css("display","block");
-            break;
-        case 'menu':
-            $("#context-dialog .contents#menu").css("display","block");
-            break;
-        case 'between':
-            $("#context-dialog .contents#between").css("display","block");
-            break;
+    if(!tutorialShowing) {
+        switch (currentLoc) {
+            case 'main':
+                $("#context-dialog .contents#main").css("display","block");
+                break;
+            case 'levelCreator':
+                $("#context-dialog .contents#levelcreator").css("display","block");
+                break;
+            case 'menu':
+                $("#context-dialog .contents#menu").css("display","block");
+                break;
+            case 'between':
+                $("#context-dialog .contents#between").css("display","block");
+                break;
+        }
     }
 }
 
@@ -185,6 +199,7 @@ var loadingState = {
         game.state.add("levelCreator", levelCreatorState);
         
         game.state.start("menu");
+        showTutorial();
     }
 };
 var gameMenuState = {
