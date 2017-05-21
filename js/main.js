@@ -247,7 +247,7 @@ var deathState = {
                 currentLevel = 0;
             }
         }
-        setDialog('menu');
+        setDialog('between');
     },
     update: function() {
         if(this.spacebar.isDown) {
@@ -284,7 +284,6 @@ var endState = {
         this.keyQ = game.input.keyboard.addKey(Phaser.Keyboard.Q);
         this.spaceCd = 0;
         currentLevel = 0;
-        setDialog('menu');
     },
     update: function() {
         if(this.keyQ.isDown) {
@@ -321,7 +320,7 @@ var levelCompleteState = {
         } else {
         }
 
-        setDialog('menu');
+        setDialog('between');
     },
     update: function() {
         if(this.spacebar.isDown) {
