@@ -117,6 +117,9 @@ function createCodeFromArray(arr) {
                 case 'd':
                     item = '6';
                     break;
+                case 'D':
+                    item = '7';
+                    break;
             }
             code += item;
         }
@@ -158,6 +161,9 @@ function createArrayFromCode(code) {
                 break;
             case 6:
                 item = 'd';
+                break;
+            case 7:
+                item = 'D';
                 break;
         }
 
@@ -527,9 +533,12 @@ var levelCreatorState = {
                         var _switch = game.add.sprite(20+20*j,20+20*i,'switch');
                         _switch.frame = 0;
                         this.buildingBlocks.add(_switch);
-                    } else if (this.map[i][j] == 'd') {
+                    } else if (this.map[i][j].toLowerCase() == 'd') {
                         var door = game.add.sprite(20+20*j,20+20*i,'door');
                         door.frame = 0;
+                        if(this.map[i][j] == 'D') {
+                            door.frame = 1;
+                        }
                         this.buildingBlocks.add(door);
                     }
                 }
@@ -572,8 +581,16 @@ var levelCreatorState = {
         }
         if(this.doorKey.isDown && (keyCD["doorKey"] < game.time.now || keyCD["doorKey"] == undefined)) {
             keyCD["doorKey"] = game.time.now + 150;
-            this.map[this.cursor[1]][this.cursor[0]] = "d";
-            this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'door'));
+            var tempSprite = game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'door');
+
+            if(this.doorKey.shiftKey == false) {
+                this.map[this.cursor[1]][this.cursor[0]] = "d";
+            } else {
+                this.map[this.cursor[1]][this.cursor[0]] = "D";
+                tempSprite.frame = 1;
+            }
+
+            this.buildingBlocks.add(tempSprite);
         }
         if(this.deleteKey.isDown && (keyCD["deleteKey"] < game.time.now || keyCD["deleteKey"] == undefined)) {
             keyCD["deleteKey"] = game.time.now + 150;
@@ -700,12 +717,17 @@ var mainState = {
                     _switch.isActiveSwitch = game.time.now - 1000;
                     _switch.body.immovable = true;
                     _switch.frame = 0;
-                } else if (level[i][j] == 'd') {
+                } else if (level[i][j].toLowerCase() == 'd') {
                     var door = game.add.sprite(20+20*j,20+20*i,'door');
                     this.doors.add(door);
                     door.isActiveDoor = true;
                     door.body.immovable = true;
                     door.frame = 0;
+
+                    if(level[i][j] == 'D') {
+                        door.isActiveDoor = false;
+                        door.frame = 1;
+                    }
                 }
             }
         }
