@@ -19,12 +19,81 @@ canvas {
 kbd { 
     background-color: #245a76;
     border-radius: 4px; 
-    padding: 2px 5px; 
-    margin: 2px; 
+    padding: 1px 5px; 
     color: #fff; 
     text-decoration: none; 
     font-family: monospace;
+    font-size: 14px;
 }
+
+.tutorial {
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    margin-left: -200px;
+    width: 400px;
+    text-align: center;
+    font-size: 16px;
+    opacity: 0;
+    cursor: default;
+}
+
+#context-dialog {
+    z-index: 0;
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    margin-left: -150px;
+    width: 300px;
+    box-sizing: border-box;
+    padding: 10px 30px;
+    border-bottom: 2px solid white;
+    font-size: 16px;
+    cursor: default;
+    opacity: 0.15;
+    transition: opacity 0.3s linear;
+    -webkit-transition: opacity 0.3s linear;
+    -moz-transition: opacity 0.3s linear;
+    -o-transition: opacity 0.3s linear;
+    -ms-transition: opacity 0.3s linear;
+}
+
+#context-dialog .contents {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    opacity: 0;
+    display: none;
+    transition: opacity 0.3s linear;
+    -webkit-transition: opacity 0.3s linear;
+    -moz-transition: opacity 0.3s linear;
+    -o-transition: opacity 0.3s linear;
+    -ms-transition: opacity 0.3s linear;
+}
+
+#context-dialog:hover {
+    opacity: 1;
+}
+
+#context-dialog:hover .contents {
+    opacity: 1;
+}
+
+.contents table {
+    width: initial;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.contents td {
+    width: 100%;
+}
+
+.contents#levelcreator td {
+    width: 50%;
+}
+
 #help-dialog {
     z-index: 0;
     position: fixed;
@@ -43,7 +112,7 @@ kbd {
     height: 100%;
     margin: 0;
     padding: 0;
-    opacity: 0;
+    opacity: 0.15;
     
     transition: opacity 0.3s linear;
     -webkit-transition: opacity 0.3s linear;
@@ -80,5 +149,4 @@ kbd {
 }
 
 #help-dialog a:hover {
-    color: #ddd;
 }

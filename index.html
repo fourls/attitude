@@ -7,7 +7,7 @@
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="css/main.css">
     <title>attitude.</title>
-    <script type="text/javascript" src="https://use.fontawesome.com/84a6a6533e.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type="text/javascript" src="js/phaser.min.js"></script>
     <script type="text/javascript" src="js/levels.js"></script>
 </head>
@@ -15,7 +15,68 @@
     <div id="container" height="440" width="440"></div>
     <div id="help-dialog">
         <div id="help-contents">
-            <a href="https://github.com/rofwell/attitude#controls">click here for controls</a>
+            <a href="https://github.com/rofwell/attitude">source code</a>
+        </div>
+    </div>
+    <div class="tutorial contents">
+        <p>mouse here for controls</p>
+    </div>
+    <div id="context-dialog">
+        <div id="main" class="contents">
+            <table>
+                <tr>
+                    <td><kbd>ARROWS</kbd> move<br></td>
+                </tr>
+                <tr>
+                    <td><kbd>X</kbd> die<br></td>
+                </tr>
+                <tr>
+                    <td><kbd>Q</kbd> quit<br></td>
+                </tr>
+            </table>
+        </div>
+        <div id="levelcreator" class="contents">
+            <table>
+                <tr>
+                    <td><kbd>W</kbd> wall<br></td>
+                    <td><kbd>R</kbd> save<br></td>
+                </tr>
+                <tr>
+                    <td><kbd>A</kbd> coin<br></td>
+                    <td><kbd>T</kbd> open<br></td>
+                </tr>
+                <tr>
+                    <td><kbd>S</kbd> player<br></td>
+                    <td><kbd>SPACE</kbd> play<br></td>
+                </tr>
+                <tr>
+                    <td><kbd>D</kbd> danger<br></td>
+                    <td><kbd>Q</kbd> quit<br></td>
+                </tr>
+                <tr>
+                    <td><kbd>E</kbd> delete<br></td>
+                </tr>
+            </table>
+        </div>
+        <div id="menu" class="contents">
+            <table>
+                <tr>
+                    <td><kbd>SPACE</kbd> continue<br></td>
+                </tr>
+                <tr>
+                    <td><kbd>B</kbd> level creator<br></td>
+                </tr>
+            </table>
+        </div>
+        <div id="between" class="contents">
+            <table>
+                <tr>
+                    <td><kbd>SPACE</kbd> continue<br></td>
+                </tr>
+                <tr>
+                    <td><kbd>Q</kbd> quit<br></td>
+                </tr>
+            </table>
         </div>
     </div>
     <script type="text/javascript" src="js/main.js"></script>

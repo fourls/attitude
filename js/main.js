@@ -5,6 +5,38 @@ ARRAYS are [x, , , ,x, ,o, x,x,x,x]
 
 */
 
+var tutorialShowing = false;
+
+function showTutorial() {
+    $(".tutorial").fadeTo(300,1);
+    tutorialShowing = true;
+    setTimeout(function(){
+        tutorialShowing = false;
+        $(".tutorial").fadeTo(300,0);
+        setDialog('menu');
+    },2000);
+}
+
+function setDialog(currentLoc) {
+    $("#context-dialog .contents").css("display","none");
+    if(!tutorialShowing) {
+        switch (currentLoc) {
+            case 'main':
+                $("#context-dialog .contents#main").css("display","block");
+                break;
+            case 'levelCreator':
+                $("#context-dialog .contents#levelcreator").css("display","block");
+                break;
+            case 'menu':
+                $("#context-dialog .contents#menu").css("display","block");
+                break;
+            case 'between':
+                $("#context-dialog .contents#between").css("display","block");
+                break;
+        }
+    }
+}
+
 function setBackgroundColor(color) {
     game.stage.backgroundColor = color;
     document.body.style.backgroundColor = color;
@@ -167,6 +199,7 @@ var loadingState = {
         game.state.add("levelCreator", levelCreatorState);
         
         game.state.start("menu");
+        showTutorial();
     }
 };
 var gameMenuState = {
@@ -192,6 +225,7 @@ var gameMenuState = {
         //game.add.existing(this.levCreText);
         this.spacebar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         this.b = game.input.keyboard.addKey(Phaser.Keyboard.B);
+        setDialog('menu');
     },
     update: function() {
         if(this.spacebar.isDown) {
@@ -228,6 +262,7 @@ var deathState = {
                 currentLevel = 0;
             }
         }
+        setDialog('between');
     },
     update: function() {
         if(this.spacebar.isDown) {
@@ -299,6 +334,8 @@ var levelCompleteState = {
             }
         } else {
         }
+
+        setDialog('between');
     },
     update: function() {
         if(this.spacebar.isDown) {
@@ -475,6 +512,9 @@ var levelCreatorState = {
         this.cursorSprite = game.add.sprite(20,20,'select');
         this.selectGroup = game.add.group();
         this.selectGroup.add(this.cursorSprite);
+
+
+        setDialog('levelCreator');
     },
     update: function() {
         if(this.wallKey.isDown && (keyCD["wallKey"] < game.time.now || keyCD["wallKey"] == undefined)) {
@@ -622,6 +662,8 @@ var mainState = {
         this.player.body.gravity.y = 1200;
 
         this.coins.setAll('body.mass',0);
+
+        setDialog('main');
     },
     update: function() {
         game.physics.arcade.collide(this.player,this.walls);
