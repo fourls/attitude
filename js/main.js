@@ -569,31 +569,37 @@ var levelCreatorState = {
     update: function() {
         if(this.wallKey.isDown && (keyCD["wallKey"] < game.time.now || keyCD["wallKey"] == undefined)) {
             keyCD["wallKey"] = game.time.now + 150;
+            this.killSprites();
             this.map[this.cursor[1]][this.cursor[0]] = "x";
             this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'wall'));
         }
         if(this.coinKey.isDown && (keyCD["coinKey"] < game.time.now || keyCD["coinKey"] == undefined)) {
             keyCD["coinKey"] = game.time.now + 150;
+            this.killSprites();
             this.map[this.cursor[1]][this.cursor[0]] = "o";
             this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'coin'));
         }
         if(this.enemyKey.isDown && (keyCD["enemyKey"] < game.time.now || keyCD["enemyKey"] == undefined)) {
             keyCD["enemyKey"] = game.time.now + 150;
+            this.killSprites();
             this.map[this.cursor[1]][this.cursor[0]] = "!";
             this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'enemy'));
         }
         if(this.playerKey.isDown && (keyCD["playerKey"] < game.time.now || keyCD["playerKey"] == undefined)) {
             keyCD["playerKey"] = game.time.now + 150;
+            this.killSprites();
             this.map[this.cursor[1]][this.cursor[0]] = "@";
             this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'player'));
         }
         if(this.switchKey.isDown && (keyCD["switchKey"] < game.time.now || keyCD["switchKey"] == undefined)) {
             keyCD["switchKey"] = game.time.now + 150;
+            this.killSprites();
             this.map[this.cursor[1]][this.cursor[0]] = "s";
             this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'switch'));
         }
         if(this.doorKey.isDown && (keyCD["doorKey"] < game.time.now || keyCD["doorKey"] == undefined)) {
             keyCD["doorKey"] = game.time.now + 150;
+            this.killSprites();
             var tempSprite = game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'door');
 
             if(this.doorKey.shiftKey == false) {
@@ -607,15 +613,7 @@ var levelCreatorState = {
         }
         if(this.deleteKey.isDown && (keyCD["deleteKey"] < game.time.now || keyCD["deleteKey"] == undefined)) {
             keyCD["deleteKey"] = game.time.now + 150;
-            this.map[this.cursor[1]][this.cursor[0]] = " ";
-            for (var i = 0; i < this.buildingBlocks.children.length; i++) {
-                if(
-                    (this.buildingBlocks.children[i].x/20) - 1 == this.cursor[0] &&
-                    (this.buildingBlocks.children[i].y/20) - 1 == this.cursor[1]
-                ) {
-                    this.buildingBlocks.children[i].kill();
-                }
-            }
+            this.killSprites();
         }
         if(this.submitKey.isDown) {
             userLevel["array"] = this.map;
@@ -674,6 +672,17 @@ var levelCreatorState = {
             inUserLevel = false;
             this.removeEventListeners();
             game.state.start("menu");
+        }
+    },
+    killSprites: function () {
+        this.map[this.cursor[1]][this.cursor[0]] = " ";
+        for (var i = 0; i < this.buildingBlocks.children.length; i++) {
+            if(
+                (this.buildingBlocks.children[i].x/20) - 1 == this.cursor[0] &&
+                (this.buildingBlocks.children[i].y/20) - 1 == this.cursor[1]
+            ) {
+                this.buildingBlocks.children[i].kill();
+            }
         }
     }
 };
