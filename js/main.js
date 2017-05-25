@@ -812,6 +812,10 @@ var mainState = {
                 game.state.start("menu");
             }
         }
+
+        if(this.player.y > 421 -20) {
+            this.onPlayerLeaveBounds();
+        }
     },
     takeCoin: function(player,coin) {
         coin.kill();
@@ -842,8 +846,8 @@ var mainState = {
     passLevel: function() {
         game.state.start('levelComplete');
     },
-    checkIfOutsideBounds: function () {
-        
+    onPlayerLeaveBounds: function () {
+        this.death();
     }
 };
 
