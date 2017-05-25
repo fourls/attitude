@@ -716,6 +716,24 @@ var mainState = {
         }
         var playerX = 60;
         var playerY = 100;
+
+        /*
+        for(var y = -2; y < 22; y++) {
+            for(var x = -2; x < 22; x++) {
+                if(y == -2 || x == -2 || y == 21 || x == 21) {
+                    if(y == 21) {
+                        var enemy = game.add.sprite(20+20*x,20+20*y,'enemy');
+                        this.enemies.add(enemy);
+                        enemy.body.immovable = true;
+                    } else {
+                        var wall = game.add.sprite(20+20*x,20+20*y,'wall');
+                        this.walls.add(wall);
+                        wall.body.immovable = true;
+                    }
+                }
+            }
+        }
+        */
         
         for (var i = 0; i < level.length; i++) {
             for (var j = 0; j < level[i].length; j++) {
@@ -823,6 +841,9 @@ var mainState = {
     },
     passLevel: function() {
         game.state.start('levelComplete');
+    },
+    checkIfOutsideBounds: function () {
+        
     }
 };
 
