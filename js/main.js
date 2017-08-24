@@ -7,6 +7,8 @@ ARRAYS are [x, , , ,x, ,o, x,x,x,x]
 
 var tutorialShowing = false;
 
+// the 'mouse for controls' bit
+// more can be added by adding .tutorial to elements
 function showTutorial() {
     $(".tutorial").fadeTo(300,1);
     tutorialShowing = true;
@@ -30,6 +32,7 @@ function showTutorial() {
     },2000);
 }
 
+// the controls dialogue in the bottom of the screen
 function setDialog(currentLoc) {
     $("#context-dialog .contents").css("display","none");
     if(!tutorialShowing) {
@@ -50,23 +53,13 @@ function setDialog(currentLoc) {
     }
 }
 
+// sets the background colour so its all aesthetic 
 function setBackgroundColor(color) {
     game.stage.backgroundColor = color;
     document.body.style.backgroundColor = color;
 }
 
-/*
-function goToLevel(lev) {
-    if (lev -1 < levels.length) {
-        currentLevel = lev - 1;
-        game.state.start('main');
-        console.log("Level " + lev.toString() + " now playing.");
-    } else {
-        console.log("Level " + lev.toString() + " does not exist.");
-    }
-}
-*/
-
+// changes from [x,x,x,x,x] to xxxxx
 function createMapFromArray (arr) {
     var returnArr = [];
     for(var y = 0; y < arr.length; y++) {
@@ -79,33 +72,7 @@ function createMapFromArray (arr) {
     return returnArr;
 }
 
-/*
-
-    20x20 array
-    
-    11111111111111111111
-    10000000000000100001
-    10000000000000100401
-    10000000000000000001
-    10200000000000000001
-    11111100000000111111
-    10000000000000000001
-    10000000002000000001
-    10000000011100000001
-    10000000000000000001
-    10200000000000000201
-    11111100000000111111
-    10000000000000000001
-    10000000002000000001
-    10000000011100000001
-    10000000000000000001
-    10000000000000000001
-    10000000000000000001
-    10200000000000000201
-    11111133311333111111 
-1111111111111111111110000000000000100001100000000000001004011000000000000000000110200000000000000001111111000000001111111000000000000000000110000000002000000001100000000111000000011000000000000000000110200000000000000201111111000000001111111000000000000000000110000000002000000001100000000111000000011000000000000000000110000000000000000001100000000000000000011020000000000000020111111133311333111111
-*/
-
+// changes from [x,x,x,x,x] to nnnnn
 function createCodeFromArray(arr) {
     var code = '';
     for(var y = 0; y < arr.length; y++) {
@@ -140,6 +107,7 @@ function createCodeFromArray(arr) {
     return code;
 }
 
+// changes from nnnnn to [x,x,x,x,x]
 function createArrayFromCode(code) {
 
     codeArr = (code).split("").map(Number);
@@ -186,16 +154,22 @@ function createArrayFromCode(code) {
     return returnArr;
 }
 
+// the level the user is making
 var userLevel = {
     map: [],
     array: []
 };
+// the keys that are recently pressed
 var keyCD = {};
 
-var currentLevel = 0
+// current level
+var currentLevel = 0;
+// amount of deaths
 var deaths = 0;
+// whether the user is making a level now
 var inUserLevel = false;
 
+// the state right at the start - sets up the loading state
 var beginningState = {
     preload: function() {
         setBackgroundColor("#3598db");
@@ -207,6 +181,7 @@ var beginningState = {
         game.state.start("loading");
     }
 };
+// the state that shows the loading bar while things load
 var loadingState = {
     preload: function() {
         game.add.sprite(game.world.centerX - (440/2), game.world.centerY - (20/2), "loading-bg");
@@ -235,9 +210,9 @@ var loadingState = {
         showTutorial();
     }
 };
+
+// the menu
 var gameMenuState = {
-    preload: function () {
-    },
     init: function() {
         this.titleText = game.make.text(game.world.centerX, game.world.centerY, "what attitude?", {
             font: 'bold 40px monospace',
@@ -246,11 +221,14 @@ var gameMenuState = {
         });
         this.titleText.anchor.set(0.5);
         this.levCreText = game.make.text(game.world.centerX, game.world.centerY + 70, "[space] play\n\n[b] level maker", {
-            font: 'bold 18px monospace',
+            font: '18px monospace',
             fill: 'rgba(255,255,255,0.6)',
-            align: 'left'
+            align: 'center'
         });
         this.levCreText.anchor.set(0.5);
+
+        currentLevel = 0;
+        deaths = 0;
     },
     create: function() {
         setBackgroundColor("#3598db");
@@ -268,6 +246,7 @@ var gameMenuState = {
         }
     }
 };
+// the death screen (bad attitude)
 var deathState = {
     preload: function () {
     },
@@ -284,9 +263,7 @@ var deathState = {
         game.add.existing(this.titleText);
         this.spacebar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         this.keyQ = game.input.keyboard.addKey(Phaser.Keyboard.Q);
-        if(inUserLevel) {
-            
-        } else {
+        if(!inUserLevel) {
             deaths ++;
             if(deaths > 3) {
                 this.titleText.text = "worst attitude.";
@@ -314,9 +291,8 @@ var deathState = {
         }
     }
 };
+// the end screen (best attitude)
 var endState = {
-    preload: function () {
-    },
     init: function() {
         this.titleText = game.make.text(game.world.centerX, game.world.centerY, "best attitude.", {
             font: 'bold 40px monospace',
@@ -330,11 +306,11 @@ var endState = {
         game.add.existing(this.titleText);
         this.spacebar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         this.keyQ = game.input.keyboard.addKey(Phaser.Keyboard.Q);
-        this.spaceCd = 0;
+        //REMOVE// this.spaceCd = 0;
         currentLevel = 0;
     },
     update: function() {
-        if(this.keyQ.isDown) {
+        if(this.keyQ.isDown || this.spacebar.isDown) {
             if(inUserLevel) {
                 game.state.start("levelCreator");
             } else {
@@ -343,9 +319,8 @@ var endState = {
         }
     }
 };
+// the level complete screen (good attitude)
 var levelCompleteState = {
-    preload: function () {
-    },
     init: function() {
         this.titleText = game.make.text(game.world.centerX, game.world.centerY, "good attitude.", {
             font: 'bold 40px monospace',
@@ -365,7 +340,6 @@ var levelCompleteState = {
             if (currentLevel >= levels.length) {
                 game.state.start('end');
             }
-        } else {
         }
 
         setDialog('between');
@@ -388,11 +362,8 @@ var levelCompleteState = {
         }
     }
 };
+// the level creator state
 var levelCreatorState = {
-    preload: function () {
-    },
-    init: function() {
-    },
     removeEventListeners: function() {
         this.wallKey.onDown.removeAll();
         this.coinKey.onDown.removeAll();
@@ -435,7 +406,6 @@ var levelCreatorState = {
             [' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
         ];
         
-        
         game.add.sprite(0,0,'outline');
         
         this.wallKey = game.input.keyboard.addKey(Phaser.Keyboard.W);
@@ -455,75 +425,9 @@ var levelCreatorState = {
 
         this.cursorKeys = game.input.keyboard.createCursorKeys();
         
-        /*
-        if(!levelCreatorListenersInitialised) {
-            this.wallKey.onDown.add(() => {
-                this.map[this.cursor[1]][this.cursor[0]] = "x";
-                this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'wall'));
-            });
-            this.coinKey.onDown.add(() => {
-                this.map[this.cursor[1]][this.cursor[0]] = "o";
-                this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'coin'));
-            });
-            this.enemyKey.onDown.add(() => {
-                this.map[this.cursor[1]][this.cursor[0]] = "!";
-                this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'enemy'));
-            });
-            this.playerKey.onDown.add(() => {
-                this.map[this.cursor[1]][this.cursor[0]] = "@";
-                this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'player'));
-            });
-            this.deleteKey.onDown.add(() => {
-                this.map[this.cursor[1]][this.cursor[0]] = " ";
-                for (var i = 0; i < this.buildingBlocks.children.length; i++) {
-                    if(
-                        (this.buildingBlocks.children[i].x/20) - 1 == this.cursor[0] &&
-                        (this.buildingBlocks.children[i].y/20) - 1 == this.cursor[1]
-                    ) {
-                        this.buildingBlocks.children[i].kill();
-                    }
-                }
-            });
-            this.submitKey.onDown.add(() => {
-                userLevel["array"] = this.map;
-                userLevel["map"] = createMapFromArray(this.map);
-                inUserLevel = true;
-                this.removeEventListeners();
-                game.state.start("main");
-            });
-            this.debugKey.onDown.add(() => {
-                console.log(createMapFromArray(this.map));
-            });
-
-            this.cursorKeys.left.onDown.add(() => {
-                if (this.cursor[0] > 0) {
-                    this.cursor[0] --;
-                    this.cursorSprite.x = this.cursor[0]*20 + 20;
-                }
-            });
-            this.cursorKeys.right.onDown.add(() => {
-                if (this.cursor[0] < 19) {
-                    this.cursor[0] ++;
-                    this.cursorSprite.x = this.cursor[0]*20 + 20;
-                }
-            });
-            this.cursorKeys.up.onDown.add(() => {
-                if (this.cursor[1] > 0) {
-                    this.cursor[1] --;
-                    this.cursorSprite.y = this.cursor[1]*20 + 20;
-                }
-            });
-            this.cursorKeys.down.onDown.add(() => {
-                if (this.cursor[1] < 19) {
-                    this.cursor[1] ++;
-                    this.cursorSprite.y = this.cursor[1]*20 + 20;
-                }
-            });
-        }*/
-        
-        
         this.buildingBlocks = game.add.group();
         
+        // if already in a user level, show the existing one
         if (inUserLevel) {
             this.map = userLevel["array"];
             inUserLevel = false;
@@ -567,36 +471,42 @@ var levelCreatorState = {
         setDialog('levelCreator');
     },
     update: function() {
+        // place wall
         if(this.wallKey.isDown && (keyCD["wallKey"] < game.time.now || keyCD["wallKey"] == undefined)) {
             keyCD["wallKey"] = game.time.now + 150;
             this.killSprites();
             this.map[this.cursor[1]][this.cursor[0]] = "x";
             this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'wall'));
         }
+        // place coin
         if(this.coinKey.isDown && (keyCD["coinKey"] < game.time.now || keyCD["coinKey"] == undefined)) {
             keyCD["coinKey"] = game.time.now + 150;
             this.killSprites();
             this.map[this.cursor[1]][this.cursor[0]] = "o";
             this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'coin'));
         }
+        // place enemy
         if(this.enemyKey.isDown && (keyCD["enemyKey"] < game.time.now || keyCD["enemyKey"] == undefined)) {
             keyCD["enemyKey"] = game.time.now + 150;
             this.killSprites();
             this.map[this.cursor[1]][this.cursor[0]] = "!";
             this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'enemy'));
         }
+        // place player
         if(this.playerKey.isDown && (keyCD["playerKey"] < game.time.now || keyCD["playerKey"] == undefined)) {
             keyCD["playerKey"] = game.time.now + 150;
             this.killSprites();
             this.map[this.cursor[1]][this.cursor[0]] = "@";
             this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'player'));
         }
+        // place switch
         if(this.switchKey.isDown && (keyCD["switchKey"] < game.time.now || keyCD["switchKey"] == undefined)) {
             keyCD["switchKey"] = game.time.now + 150;
             this.killSprites();
             this.map[this.cursor[1]][this.cursor[0]] = "s";
             this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'switch'));
         }
+        // place door
         if(this.doorKey.isDown && (keyCD["doorKey"] < game.time.now || keyCD["doorKey"] == undefined)) {
             keyCD["doorKey"] = game.time.now + 150;
             this.killSprites();
@@ -611,10 +521,12 @@ var levelCreatorState = {
 
             this.buildingBlocks.add(tempSprite);
         }
+        // remove elements
         if(this.deleteKey.isDown && (keyCD["deleteKey"] < game.time.now || keyCD["deleteKey"] == undefined)) {
             keyCD["deleteKey"] = game.time.now + 150;
             this.killSprites();
         }
+        // plays the level
         if(this.submitKey.isDown) {
             userLevel["array"] = this.map;
             userLevel["map"] = createMapFromArray(this.map);
@@ -622,10 +534,12 @@ var levelCreatorState = {
             this.removeEventListeners();
             game.state.start("main");
         }
+        // gives the game number
         if(this.debugKey.isDown && (keyCD["debugKey"] < game.time.now || keyCD["debugKey"] == undefined)) {
             keyCD["debugKey"] = game.time.now + 200;
             prompt("Here is your game number.", createCodeFromArray(this.map));
         }
+        // takes the game number
         if(this.openKey.isDown && (keyCD["openKey"] < game.time.now || keyCD["openKey"] == undefined)) {
             keyCD["openKey"] = game.time.now + 200;
             levelNo = prompt("Enter your game number.");
@@ -639,6 +553,7 @@ var levelCreatorState = {
                 }
             }
         }
+        // sets this.cursor 
         if(this.cursorKeys.left.isDown && (keyCD["cursorKeys.left"] < game.time.now || keyCD["cursorKeys.left"] == undefined)) {
             keyCD["cursorKeys.left"] = game.time.now + 200;
             if (this.cursor[0] > 0) {
@@ -668,12 +583,14 @@ var levelCreatorState = {
             }
         }
         
+        // quit user level
         if (this.keyQ.isDown) {
             inUserLevel = false;
             this.removeEventListeners();
             game.state.start("menu");
         }
     },
+    // kills the sprites where a mouse cursor is
     killSprites: function () {
         this.map[this.cursor[1]][this.cursor[0]] = " ";
         for (var i = 0; i < this.buildingBlocks.children.length; i++) {
@@ -686,9 +603,8 @@ var levelCreatorState = {
         }
     }
 };
+// the game state
 var mainState = {
-    preload: function() {
-    },
     create: function() {
         setBackgroundColor("#3598db");
         game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -710,30 +626,15 @@ var mainState = {
         
         // 20x20 level 
         
+        // TODO: this is a nightmare, clean it up
         var level = createMapFromArray(createArrayFromCode(levels[currentLevel]));
         if (inUserLevel) {
             level = userLevel["map"];
         }
+
+        // sets player location
         var playerX = 60;
         var playerY = 100;
-
-        /*
-        for(var y = -2; y < 22; y++) {
-            for(var x = -2; x < 22; x++) {
-                if(y == -2 || x == -2 || y == 21 || x == 21) {
-                    if(y == 21) {
-                        var enemy = game.add.sprite(20+20*x,20+20*y,'enemy');
-                        this.enemies.add(enemy);
-                        enemy.body.immovable = true;
-                    } else {
-                        var wall = game.add.sprite(20+20*x,20+20*y,'wall');
-                        this.walls.add(wall);
-                        wall.body.immovable = true;
-                    }
-                }
-            }
-        }
-        */
         
         for (var i = 0; i < level.length; i++) {
             for (var j = 0; j < level[i].length; j++) {
@@ -772,6 +673,7 @@ var mainState = {
             }
         }
         
+        // adds player
         this.player = game.add.sprite(playerX,playerY,'player');
         this.player.body.gravity.y = 1200;
 
@@ -780,13 +682,14 @@ var mainState = {
         setDialog('main');
     },
     update: function() {
+        // handle collisions
         game.physics.arcade.collide(this.player,this.walls);
         game.physics.arcade.collide(this.player,this.doors, null, this.checkDoorCollision, this);
         game.physics.arcade.collide(this.player,this.switches, null, this.activateSwitch, this);
         game.physics.arcade.collide(this.player,this.coins, null, this.takeCoin, this);
         game.physics.arcade.collide(this.player,this.enemies, this.death, null, this);
         
-        
+        // move the player
         if (this.cursor.left.isDown || this.keyA.isDown)
             this.player.body.velocity.x = -200;
         else if (this.cursor.right.isDown || this.keyD.isDown)
@@ -797,14 +700,17 @@ var mainState = {
         if ((this.cursor.up.isDown || this.keySpace.isDown || this.keyW.isDown) && this.player.body.touching.down)
             this.player.body.velocity.y = -380;
         
+        // pass the level if hit all coins
         if(this.coins.total == 0) {
             this.passLevel();
         }
         
+        // kys if want to die
         if(this.iWantToDie.isDown) {
             this.death();
         }
     
+        // quit to menu
         if(this.keyQ.isDown) {
             if(inUserLevel) {
                 game.state.start("levelCreator");
@@ -813,27 +719,31 @@ var mainState = {
             }
         }
 
+        // if the player's fallen out
         if(this.player.y > 421 -20) {
             this.onPlayerLeaveBounds();
         }
     },
     takeCoin: function(player,coin) {
         coin.kill();
+        // prevents the player from double jumping
         this.player.body.touching.down = false;
         return false;
     },
+    // activates the switch
     activateSwitch: function(player, _switch) {
         if(game.time.now < _switch.isActiveSwitch)
             return false;
 
+        // ??? i don't understand why isActiveSwitch is called that - seems more like a timer, timeSwitchFlipped would be better?
         _switch.isActiveSwitch = game.time.now + 1000;
-        //_switch.frame = _switch.frame == 1 ? 0 : 1;
         for(var i = 0; i < this.doors.children.length; i++) {
             this.doors.children[i].isActiveDoor = !(this.doors.children[i].isActiveDoor);
             this.doors.children[i].frame = this.doors.children[i].isActiveDoor ? 0 : 1;
         }
         return false;
     },
+    // special door collision - checks if its active
     checkDoorCollision: function(player, door) {
         if(door.isActiveDoor)
             return true;
@@ -851,6 +761,7 @@ var mainState = {
     }
 };
 
+// begins the game - the only actual code that runs :P
 var game = new Phaser.Game(440, 440,Phaser.AUTO,"container");
 game.state.add("beginning",beginningState);
 game.state.start('beginning');
