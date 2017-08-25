@@ -507,7 +507,7 @@ var levelCreatorState = {
     },
     // kills the sprites where a mouse cursor is
     killSprites: function () {
-        this.map[this.cursor[1]][this.cursor[0]] = " ";
+        this.map[this.cursor[1]][this.cursor[0]] = "0";
         for (var i = 0; i < this.buildingBlocks.children.length; i++) {
             if(
                 (this.buildingBlocks.children[i].x/20) - 1 == this.cursor[0] &&
