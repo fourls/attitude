@@ -1,7 +1,6 @@
 /*
 
 MAPS are [x    x  o  xxxx]
-ARRAYS are [x, , , ,x, ,o, x,x,x,x]
 
 */
 
@@ -53,112 +52,38 @@ function setDialog(currentLoc) {
     }
 }
 
-// sets the background colour so its all aesthetic 
+// sets the background colour so its all aesthetic
 function setBackgroundColor(color) {
     game.stage.backgroundColor = color;
     document.body.style.backgroundColor = color;
 }
 
-// changes from [x,x,x,x,x] to xxxxx
-function createMapFromArray (arr) {
-    var returnArr = [];
-    for(var y = 0; y < arr.length; y++) {
-        returnArr[y] = '';
-        for (var x = 0; x < arr[y].length; x++) {
-            returnArr[y] += arr[y][x];
-        }
-    }
-    
-    return returnArr;
-}
-
-// changes from [x,x,x,x,x] to nnnnn
-function createCodeFromArray(arr) {
+// create a code
+function createCodeFromMap(m) {
     var code = '';
-    for(var y = 0; y < arr.length; y++) {
-        for(var x = 0; x < arr[y].length; x++) {
-            var item = '0';
-            switch (arr[y][x]) {
-                case 'x':
-                    item = '1';
-                    break;
-                case 'o':
-                    item = '2';
-                    break;
-                case '!':
-                    item = '3';
-                    break;
-                case '@':
-                    item = '4';
-                    break;
-                case 's':
-                    item = '5';
-                    break;
-                case 'd':
-                    item = '6';
-                    break;
-                case 'D':
-                    item = '7';
-                    break;
-            }
+    for(var y = 0; y < m.length; y++) {
+        for(var x = 0; x < m[y].length; x++) {
+            var item = m[y][x];
             code += item;
         }
     }
     return code;
 }
 
-// changes from nnnnn to [x,x,x,x,x]
-function createArrayFromCode(code) {
+function toStringRows(ar) {
+    for(y = 0; y < ar.length; y++) {
+        for(x = 0; x < ar[y].length; x++) {
 
-    codeArr = (code).split("").map(Number);
-    if(codeArr.length != 400) {
-        return codeArr;
-    }
-    returnArr = [];
-    for(var i = 0; i < codeArr.length; i++) {
-        y = Math.floor(i / 20);
-        x = i - (y * 20);
-
-        if(x == 0) {
-            returnArr[y] = [];
         }
-
-        var item = ' ';
-        switch (codeArr[i]) {
-            case 1:
-                item = 'x';
-                break;
-            case 2:
-                item = 'o';
-                break;
-            case 3:
-                item = '!';
-                break;
-            case 4:
-                item = '@';
-                break;
-            case 5:
-                item = 's';
-                break;
-            case 6:
-                item = 'd';
-                break;
-            case 7:
-                item = 'D';
-                break;
-        }
-
-        returnArr[y][x] = item;
     }
+}
 
-    return returnArr;
+function splitIntoArray(st) {
+    return st.match(/.{20}/g);
 }
 
 // the level the user is making
-var userLevel = {
-    map: [],
-    array: []
-};
+var userLevel = [];
 // the keys that are recently pressed
 var keyCD = {};
 
@@ -306,7 +231,6 @@ var endState = {
         game.add.existing(this.titleText);
         this.spacebar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         this.keyQ = game.input.keyboard.addKey(Phaser.Keyboard.Q);
-        //REMOVE// this.spaceCd = 0;
         currentLevel = 0;
     },
     update: function() {
@@ -384,27 +308,27 @@ var levelCreatorState = {
         
         this.map = 
         [//   0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19
-            [' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
-            [' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
-            [' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
-            [' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
-            [' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
-            [' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
-            [' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
-            [' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
-            [' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
-            [' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
-            [' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
-            [' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
-            [' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
-            [' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
-            [' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
-            [' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
-            [' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
-            [' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
-            [' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
-            [' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
-        ];
+            '                    ',
+            '                    ',
+            '                    ',
+            '                    ',
+            '                    ',
+            '                    ',
+            '                    ',
+            '                    ',
+            '                    ',
+            '                    ',
+            '                    ',
+            '                    ',
+            '                    ',
+            '                    ',
+            '                    ',
+            '                    ',
+            '                    ',
+            '                    ',
+            '                    ',
+            '                    ',
+        ].map(function(x) {return x.split('');});
         
         game.add.sprite(0,0,'outline');
         
@@ -429,31 +353,32 @@ var levelCreatorState = {
         
         // if already in a user level, show the existing one
         if (inUserLevel) {
-            this.map = userLevel["array"];
+            this.map = userLevel;
             inUserLevel = false;
             
             for (var i = 0; i < this.map.length; i++) {
                 for (var j = 0; j < this.map[i].length; j++) {
-                    if (this.map[i][j] == 'x') {
+                    // TODO: change to a switch/case
+                    if (this.map[i][j] == '1') {
                         var wall = game.add.sprite(20+20*j,20+20*i,'wall');
                         this.buildingBlocks.add(wall);
-                    } else if (this.map[i][j] == 'o') {
+                    } else if (this.map[i][j] == '2') {
                         var coin = game.add.sprite(20+20*j,20+20*i,'coin');
                         this.buildingBlocks.add(coin);
-                    } else if (this.map[i][j] == '!') {
+                    } else if (this.map[i][j] == '3') {
                         var enemy = game.add.sprite(20+20*j,20+20*i,'enemy');
                         this.buildingBlocks.add(enemy);
-                    } else if (this.map[i][j] == '@') {
+                    } else if (this.map[i][j] == '4') {
                         var player = game.add.sprite(20+20*j,20+20*i,'player');
                         this.buildingBlocks.add(player);
-                    } else if (this.map[i][j] == 's') {
+                    } else if (this.map[i][j] == '5') {
                         var _switch = game.add.sprite(20+20*j,20+20*i,'switch');
                         _switch.frame = 0;
                         this.buildingBlocks.add(_switch);
-                    } else if (this.map[i][j].toLowerCase() == 'd') {
+                    } else if (this.map[i][j] == '6' || this.map[i][j] == '7') {
                         var door = game.add.sprite(20+20*j,20+20*i,'door');
                         door.frame = 0;
-                        if(this.map[i][j] == 'D') {
+                        if(this.map[i][j] == '7') {
                             door.frame = 1;
                         }
                         this.buildingBlocks.add(door);
@@ -475,35 +400,35 @@ var levelCreatorState = {
         if(this.wallKey.isDown && (keyCD["wallKey"] < game.time.now || keyCD["wallKey"] == undefined)) {
             keyCD["wallKey"] = game.time.now + 150;
             this.killSprites();
-            this.map[this.cursor[1]][this.cursor[0]] = "x";
+            this.map[this.cursor[1]][this.cursor[0]] = "1";
             this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'wall'));
         }
         // place coin
         if(this.coinKey.isDown && (keyCD["coinKey"] < game.time.now || keyCD["coinKey"] == undefined)) {
             keyCD["coinKey"] = game.time.now + 150;
             this.killSprites();
-            this.map[this.cursor[1]][this.cursor[0]] = "o";
+            this.map[this.cursor[1]][this.cursor[0]] = "2";
             this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'coin'));
         }
         // place enemy
         if(this.enemyKey.isDown && (keyCD["enemyKey"] < game.time.now || keyCD["enemyKey"] == undefined)) {
             keyCD["enemyKey"] = game.time.now + 150;
             this.killSprites();
-            this.map[this.cursor[1]][this.cursor[0]] = "!";
+            this.map[this.cursor[1]][this.cursor[0]] = "3";
             this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'enemy'));
         }
         // place player
         if(this.playerKey.isDown && (keyCD["playerKey"] < game.time.now || keyCD["playerKey"] == undefined)) {
             keyCD["playerKey"] = game.time.now + 150;
             this.killSprites();
-            this.map[this.cursor[1]][this.cursor[0]] = "@";
+            this.map[this.cursor[1]][this.cursor[0]] = "4";
             this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'player'));
         }
         // place switch
         if(this.switchKey.isDown && (keyCD["switchKey"] < game.time.now || keyCD["switchKey"] == undefined)) {
             keyCD["switchKey"] = game.time.now + 150;
             this.killSprites();
-            this.map[this.cursor[1]][this.cursor[0]] = "s";
+            this.map[this.cursor[1]][this.cursor[0]] = "5";
             this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'switch'));
         }
         // place door
@@ -513,9 +438,9 @@ var levelCreatorState = {
             var tempSprite = game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'door');
 
             if(this.doorKey.shiftKey == false) {
-                this.map[this.cursor[1]][this.cursor[0]] = "d";
+                this.map[this.cursor[1]][this.cursor[0]] = "6";
             } else {
-                this.map[this.cursor[1]][this.cursor[0]] = "D";
+                this.map[this.cursor[1]][this.cursor[0]] = "7";
                 tempSprite.frame = 1;
             }
 
@@ -528,8 +453,7 @@ var levelCreatorState = {
         }
         // plays the level
         if(this.submitKey.isDown) {
-            userLevel["array"] = this.map;
-            userLevel["map"] = createMapFromArray(this.map);
+            userLevel = this.map;
             inUserLevel = true;
             this.removeEventListeners();
             game.state.start("main");
@@ -537,7 +461,7 @@ var levelCreatorState = {
         // gives the game number
         if(this.debugKey.isDown && (keyCD["debugKey"] < game.time.now || keyCD["debugKey"] == undefined)) {
             keyCD["debugKey"] = game.time.now + 200;
-            prompt("Here is your game number.", createCodeFromArray(this.map));
+            prompt("Here is your game number.", createCodeFromMap(this.map));
         }
         // takes the game number
         if(this.openKey.isDown && (keyCD["openKey"] < game.time.now || keyCD["openKey"] == undefined)) {
@@ -626,11 +550,11 @@ var mainState = {
         
         // 20x20 level 
         
-        // TODO: this is a nightmare, clean it up
-        var level = createMapFromArray(createArrayFromCode(levels[currentLevel]));
+        var level = splitIntoArray(levels[currentLevel]).map((x) => x.split(''));
         if (inUserLevel) {
-            level = userLevel["map"];
+            level = userLevel;
         }
+        console.log(level);
 
         // sets player location
         var playerX = 60;
@@ -638,34 +562,34 @@ var mainState = {
         
         for (var i = 0; i < level.length; i++) {
             for (var j = 0; j < level[i].length; j++) {
-                if (level[i][j] == 'x') {
+                if (level[i][j] == '1') {
                     var wall = game.add.sprite(20+20*j,20+20*i,'wall');
                     this.walls.add(wall);
                     wall.body.immovable = true;
-                } else if (level[i][j] == 'o') {
+                } else if (level[i][j] == '2') {
                     var coin = game.add.sprite(20+20*j,20+20*i,'coin');
                     this.coins.add(coin);
-                } else if (level[i][j] == '!') {
+                } else if (level[i][j] == '3') {
                     var enemy = game.add.sprite(20+20*j,20+20*i,'enemy');
                     this.enemies.add(enemy);
                     enemy.body.immovable = true;
-                } else if (level[i][j] == '@') {
+                } else if (level[i][j] == '4') {
                     playerX = 20+20*j;
                     playerY = 20+20*i;
-                } else if (level[i][j] == 's') {
+                } else if (level[i][j] == '5') {
                     var _switch = game.add.sprite(20+20*j,20+20*i,'switch');
                     this.switches.add(_switch);
                     _switch.isActiveSwitch = game.time.now - 1000;
                     _switch.body.immovable = true;
                     _switch.frame = 0;
-                } else if (level[i][j].toLowerCase() == 'd') {
+                } else if (level[i][j] == '6' || level[i][j] == '7') {
                     var door = game.add.sprite(20+20*j,20+20*i,'door');
                     this.doors.add(door);
                     door.isActiveDoor = true;
                     door.body.immovable = true;
                     door.frame = 0;
 
-                    if(level[i][j] == 'D') {
+                    if(level[i][j] == '7') {
                         door.isActiveDoor = false;
                         door.frame = 1;
                     }
