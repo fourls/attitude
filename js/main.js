@@ -45,6 +45,9 @@ function setDialog(currentLoc) {
             case 'between':
                 $("#context-dialog .contents#between").css("display","block");
                 break;
+            case 'end':
+                $("#context-dialog .contents#end").css("display","block");
+                break;
         }
     }
 }
@@ -247,6 +250,7 @@ var endState = {
     },
     create: function() {
         setBackgroundColor("#67b56d");
+        setDialog('end');
         this.timeSpentIcon = game.add.sprite(this.timeSpentText.left - 5, this.timeSpentText.y - 4, 'clockicon');
         this.timeSpentIcon.anchor.set(1,0.5);
         this.timeSpentIcon.alpha = 0.7;

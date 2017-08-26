@@ -17,15 +17,33 @@ canvas {
 }
 
 kbd { 
-    background-color: #245a76;
-    border-radius: 4px; 
-    padding: 1px 5px; 
+/*     background-color: #245a76; */
+    padding: 3px 10px; 
     color: #fff; 
     text-decoration: none; 
     font-family: monospace;
     font-size: 14px;
+    border-right: 0;
+    display: inline-block;
+    border-right: 1px solid white;
+    width: 50%;
+    box-sizing: border-box;
+    text-align: right;
+    font-size: 16px;
 }
 
+span {
+    padding: 3px 10px; 
+    font-size: 14px;
+    border-left: 0;
+    border-left: 1px solid white;
+/*     background-color: rgba(100,100,100,0.2); */
+    color: white;
+    display: inline-block;
+    width: 50%;
+    box-sizing: border-box;
+    text-align: left;
+}
 .tutorial {
     position: fixed;
     bottom: 10px;
@@ -46,7 +64,7 @@ kbd {
     margin-left: -200px;
     width: 400px;
     box-sizing: border-box;
-    padding: 10px 30px;
+    padding: 5px 30px;
     border-bottom: 2px solid white;
     font-size: 16px;
     cursor: default;
@@ -56,6 +74,8 @@ kbd {
     -moz-transition: opacity 0.3s linear;
     -o-transition: opacity 0.3s linear;
     -ms-transition: opacity 0.3s linear;
+
+/*     text-align: center; */
 }
 
 #context-dialog .contents {
@@ -81,9 +101,7 @@ kbd {
 }
 
 .contents table {
-    width: initial;
-    margin-left: auto;
-    margin-right: auto;
+    width: 100%;
 }
 
 .contents td {
