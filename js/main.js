@@ -1,10 +1,7 @@
-/*
-
-MAPS are [x    x  o  xxxx]
-
-*/
-
+var Phaser, levels, $;
 var tutorialShowing = false;
+
+var game = new Phaser.Game(440, 440,Phaser.AUTO,"container");
 
 // the 'mouse for controls' bit
 // more can be added by adding .tutorial to elements
@@ -74,6 +71,10 @@ function splitIntoArray(st) {
     return st.match(/.{20}/g).map((x) => x.split(''));
 }
 
+function runTimer () {
+    timeSpent += 250;
+}
+
 // the level the user is making
 var userLevel = [];
 // the keys that are recently pressed
@@ -83,6 +84,11 @@ var keyCD = {};
 var currentLevel = 0;
 // amount of deaths
 var deaths = 0;
+// amount of deaths in total
+var totalDeaths = 0;
+// time spent
+var timeSpent = 0;
+var timerRunning = false;
 // whether the user is making a level now
 var inUserLevel = false;
 
@@ -123,11 +129,11 @@ var loadingState = {
         game.state.add('end',endState);
         game.state.add("levelCreator", levelCreatorState);
         
+
         game.state.start("menu");
         showTutorial();
     }
 };
-
 // the menu
 var gameMenuState = {
     init: function() {
@@ -146,6 +152,7 @@ var gameMenuState = {
 
         currentLevel = 0;
         deaths = 0;
+        totalDeaths = 0;
     },
     create: function() {
         setBackgroundColor("#3598db");
@@ -182,11 +189,13 @@ var deathState = {
         this.keyQ = game.input.keyboard.addKey(Phaser.Keyboard.Q);
         if(!inUserLevel) {
             deaths ++;
+            totalDeaths ++;
             if(deaths > 3) {
                 this.titleText.text = "worst attitude.";
                 setBackgroundColor("#953f3f");
                 deaths = 0;
                 currentLevel = 0;
+                // TODO: add deaths + time to worst attitude
             }
         }
         setDialog('between');
@@ -217,16 +226,34 @@ var endState = {
             align: 'center'
         });
         this.titleText.anchor.set(0.5);
+        this.timeSpentText = game.make.text(115, game.world.centerY + 40, 'an error has occurred', {
+            font: 'bold 16px monospace',
+            fill: 'rgba(255,255,255,0.5)',
+            align: 'left'
+        });
+        this.timeSpentText.anchor.set(0.5);
+        this.deathsText = game.make.text(game.world.width - 120, game.world.centerY + 40, 'an error has occurred', {
+            font: 'bold 16px monospace',
+            fill: 'rgba(255,255,255,0.5)',
+            align: 'right'
+        });
+        this.deathsText.anchor.set(0.5);
     },
     create: function() {
         setBackgroundColor("#67b56d");
         game.add.existing(this.titleText);
+        game.add.existing(this.timeSpentText);
+        game.add.existing(this.deathsText);
         this.spacebar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         this.keyQ = game.input.keyboard.addKey(Phaser.Keyboard.Q);
         currentLevel = 0;
+        this.timeSpentText.text = Math.floor(timeSpent / 1000) + ' seconds';
+        this.deathsText.text = totalDeaths + ' death';
+        if(totalDeaths != 1)
+            this.deathsText.text += 's';
     },
     update: function() {
-        if(this.keyQ.isDown || this.spacebar.isDown) {
+        if(this.keyQ.isDown) {
             if(inUserLevel) {
                 game.state.start("levelCreator");
             } else {
@@ -594,6 +621,10 @@ var mainState = {
         this.coins.setAll('body.mass',0);
 
         setDialog('main');
+
+        if(!inUserLevel) {
+            game.time.events.loop(250, runTimer, this);
+        }
     },
     update: function() {
         // handle collisions
@@ -649,7 +680,7 @@ var mainState = {
         if(game.time.now < _switch.isActiveSwitch)
             return false;
 
-        // ??? i don't understand why isActiveSwitch is called that - seems more like a timer, timeSwitchFlipped would be better?
+        // TODO: i don't understand why isActiveSwitch is called that - seems more like a timer, timeSwitchFlipped would be better?
         _switch.isActiveSwitch = game.time.now + 1000;
         for(var i = 0; i < this.doors.children.length; i++) {
             this.doors.children[i].isActiveDoor = !(this.doors.children[i].isActiveDoor);
@@ -666,9 +697,13 @@ var mainState = {
     },
     death: function() {
         game.state.start('death');
+        if(!inUserLevel)
+            game.time.events.remove(runTimer);
     },
     passLevel: function() {
         game.state.start('levelComplete');
+        if(!inUserLevel)
+            game.time.events.remove(runTimer);
     },
     onPlayerLeaveBounds: function () {
         this.death();
@@ -676,6 +711,5 @@ var mainState = {
 };
 
 // begins the game - the only actual code that runs :P
-var game = new Phaser.Game(440, 440,Phaser.AUTO,"container");
 game.state.add("beginning",beginningState);
 game.state.start('beginning');
