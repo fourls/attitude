@@ -35,18 +35,23 @@ function setDialog(currentLoc) {
         switch (currentLoc) {
             case 'main':
                 $("#context-dialog .contents#main").css("display","block");
+                document.querySelector('#icon').href = 'default.ico';
                 break;
             case 'levelCreator':
                 $("#context-dialog .contents#levelcreator").css("display","block");
+                document.querySelector('#icon').href = 'default.ico';
                 break;
             case 'menu':
                 $("#context-dialog .contents#menu").css("display","block");
+                document.querySelector('#icon').href = 'default.ico';
                 break;
             case 'between':
                 $("#context-dialog .contents#between").css("display","block");
+                document.querySelector('#icon').href = 'default.ico';
                 break;
             case 'end':
                 $("#context-dialog .contents#end").css("display","block");
+                document.querySelector('#icon').href = 'end.ico';
                 break;
         }
     }
@@ -196,18 +201,19 @@ var deathState = {
         game.add.existing(this.titleText);
         this.spacebar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         this.keyQ = game.input.keyboard.addKey(Phaser.Keyboard.Q);
+        setDialog('between');
         if(!inUserLevel) {
             deaths ++;
             totalDeaths ++;
             if(deaths > 3) {
                 this.titleText.text = "worst attitude.";
                 setBackgroundColor("#953f3f");
+                document.querySelector('#icon').href = 'death.ico';
                 deaths = 0;
                 currentLevel = 0;
                 // TODO: add deaths + time to worst attitude
             }
         }
-        setDialog('between');
     },
     update: function() {
         if(this.spacebar.isDown) {
