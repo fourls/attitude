@@ -244,7 +244,6 @@ var endState = {
     },
     create: function() {
         setBackgroundColor("#67b56d");
-<<<<<<< HEAD
         setDialog('end');
         this.timeSpentIcon = game.add.sprite(this.timeSpentText.left - 5, this.timeSpentText.y - 4, 'clockicon');
         this.timeSpentIcon.anchor.set(1,0.5);
@@ -254,8 +253,6 @@ var endState = {
         this.deathsIcon.alpha = 0.7;
         console.log(this.timeSpentText);
         console.log(this.deathsText);
-=======
->>>>>>> parent of b720e92... added icons + spacebar + updated phaser version
         game.add.existing(this.titleText);
         game.add.existing(this.timeSpentText);
         game.add.existing(this.deathsText);
