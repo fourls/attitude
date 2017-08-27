@@ -82,6 +82,7 @@ function runTimer () {
 var userLevel = [];
 // the keys that are recently pressed
 var keyCD = {};
+
 // current level
 var currentLevel = 0;
 // amount of deaths
@@ -90,6 +91,7 @@ var deaths = 0;
 var totalDeaths = 0;
 // time spent
 var timeSpent = 0;
+var timerRunning = false;
 // whether the user is making a level now
 var inUserLevel = false;
 
@@ -118,17 +120,9 @@ var loadingState = {
         game.load.image('coin','assets/coin.png');
         game.load.image('enemy','assets/enemy.png');
         game.load.image('select','assets/select.png');
-
         game.load.image('outline','assets/outline.png');
-        game.load.image('skullicon','assets/skull-tiny.png');
-        game.load.image('clockicon','assets/clock-tiny.png');
-
         game.load.spritesheet('door','assets/door.png', 20, 20);
         game.load.spritesheet('switch','assets/switch.png', 20, 20);
-
-        game.forceSingleUpdate = true;
-        game.renderer.renderSession.roundPixels = true;
-        game.stage.disableVisibilityChange = true;
     },
     create: function() {
         game.state.add('main', mainState);
@@ -235,21 +229,22 @@ var endState = {
             align: 'center'
         });
         this.titleText.anchor.set(0.5);
-        this.timeSpentText = game.make.text(140, game.world.centerY + 40, 'an error has occurred', {
-            font: '24px monospace',
-            fill: 'rgba(255,255,255,1)',
+        this.timeSpentText = game.make.text(115, game.world.centerY + 40, 'an error has occurred', {
+            font: 'bold 16px monospace',
+            fill: 'rgba(255,255,255,0.5)',
             align: 'left'
         });
-        this.timeSpentText.anchor.set(0,0.5);
-        this.deathsText = game.make.text(game.world.width - 140, game.world.centerY + 40, 'an error has occurred', {
-            font: '24px monospace',
-            fill: 'rgba(255,255,255,1)',
+        this.timeSpentText.anchor.set(0.5);
+        this.deathsText = game.make.text(game.world.width - 120, game.world.centerY + 40, 'an error has occurred', {
+            font: 'bold 16px monospace',
+            fill: 'rgba(255,255,255,0.5)',
             align: 'right'
         });
-        this.deathsText.anchor.set(0,0.5);
+        this.deathsText.anchor.set(0.5);
     },
     create: function() {
         setBackgroundColor("#67b56d");
+<<<<<<< HEAD
         setDialog('end');
         this.timeSpentIcon = game.add.sprite(this.timeSpentText.left - 5, this.timeSpentText.y - 4, 'clockicon');
         this.timeSpentIcon.anchor.set(1,0.5);
@@ -259,18 +254,18 @@ var endState = {
         this.deathsIcon.alpha = 0.7;
         console.log(this.timeSpentText);
         console.log(this.deathsText);
+=======
+>>>>>>> parent of b720e92... added icons + spacebar + updated phaser version
         game.add.existing(this.titleText);
         game.add.existing(this.timeSpentText);
         game.add.existing(this.deathsText);
-        this.timeSpentText.text = Math.floor(timeSpent / 1000);
-        this.deathsText.text = totalDeaths;
-
         this.spacebar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         this.keyQ = game.input.keyboard.addKey(Phaser.Keyboard.Q);
         currentLevel = 0;
-        deaths = 0;
-        totalDeaths = 0;
-        timeSpent = 0;
+        this.timeSpentText.text = Math.floor(timeSpent / 1000) + ' seconds';
+        this.deathsText.text = totalDeaths + ' death';
+        if(totalDeaths != 1)
+            this.deathsText.text += 's';
     },
     update: function() {
         if(this.keyQ.isDown) {
@@ -279,18 +274,6 @@ var endState = {
             } else {
                 game.state.start("menu");
             }
-        }
-
-        if(this.spacebar.isDown) {
-            this.timeSpentIcon.alpha = 0.7;
-            this.timeSpentText.alpha = 0.7;
-            this.deathsIcon.alpha = 0.7;
-            this.deathsText.alpha = 0.7;
-        } else {
-            this.timeSpentIcon.alpha = 0;
-            this.timeSpentText.alpha = 0;
-            this.deathsIcon.alpha = 0;
-            this.deathsText.alpha = 0;
         }
     }
 };
