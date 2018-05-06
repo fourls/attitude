@@ -96,6 +96,8 @@ span {
     -moz-transition: opacity 0.3s linear;
     -o-transition: opacity 0.3s linear;
     -ms-transition: opacity 0.3s linear;
+
+    pointer-events: none;
 }
 
 #context-dialog:hover {
