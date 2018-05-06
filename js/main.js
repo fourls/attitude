@@ -1,4 +1,5 @@
 var Phaser, levels, $;
+
 var tutorialShowing = false;
 
 var game = new Phaser.Game(440, 440,Phaser.AUTO,"container");
@@ -6,49 +7,53 @@ var game = new Phaser.Game(440, 440,Phaser.AUTO,"container");
 // the 'mouse for controls' bit
 // more can be added by adding .tutorial to elements
 function showTutorial() {
+    // fade in
     $(".tutorial").fadeTo(300,1);
     tutorialShowing = true;
+
+    // in 2 seconds, fade out and set the control dialog to the current state
     setTimeout(function(){
         tutorialShowing = false;
         $(".tutorial").fadeTo(300,0);
-        switch (game.state.current) {
-            case 'main':
-                setDialog('main');
-                break;
-            case 'menu':
-                setDialog('menu');
-                break;
-            case 'levelCreator':
-                setDialog('levelCreator');
-                break;
-            default:
-                setDialog('between');
-                break;
+        if (validStates.includes(game.state.current)) {
+            setDialog(game.state.current);
         }
     },2000);
 }
 
-// the controls dialogue in the bottom of the screen
-function setDialog(currentLoc) {
+$("#popup").hide();
+function showPopup(heading,content,onReturn) {
+    $("#popup").show();
+    $("#container").hide();
+    $("#popup h1").text(heading);
+    $("#levelcode").val(content);
+    game.paused = true;
+    game.input.enabled = false;
+    $("#popup .confirm-button").on("click",() => {
+        $(this).off();
+        $("#container").show();
+        $("#popup").hide()
+        game.paused = false;
+        game.input.enabled = true;
+        onReturn($("#levelcode").val());
+    });
+}
+
+// the controls dialog in the bottom of the screen
+function setDialog(currentState) {
     $("#context-dialog .contents").css("display","none");
     if(!tutorialShowing) {
-        switch (currentLoc) {
-            case 'main':
-                $("#context-dialog .contents#main").css("display","block");
-                break;
-            case 'levelCreator':
-                $("#context-dialog .contents#levelcreator").css("display","block");
-                break;
-            case 'menu':
-                $("#context-dialog .contents#menu").css("display","block");
-                break;
-            case 'between':
-                $("#context-dialog .contents#between").css("display","block");
-                break;
-            case 'end':
-                $("#context-dialog .contents#end").css("display","block");
-                break;
+        var sectionID = currentState;
+        
+        // if the state's ID is different to the actual state, set the ID reference to the correct ID
+        if (Object.keys(dialogIDOverrides).includes(currentState)) {
+            sectionID = dialogIDOverrides[currentState]
         }
+
+        if(validStates.includes(currentState)) {
+            $("#context-dialog .contents#" + sectionID).css("display","block");
+        }
+        
     }
 }
 
@@ -56,11 +61,12 @@ function setDialog(currentLoc) {
 function setBackgroundColor(color) {
     game.stage.backgroundColor = color;
     document.body.style.backgroundColor = color;
+    $("#context-dialog .contents").css("background-color",color);
 }
 
 // create a code
 function createCodeFromMap(m) {
-    var code = '';
+    var code = "";
     for(var y = 0; y < m.length; y++) {
         for(var x = 0; x < m[y].length; x++) {
             var item = m[y][x];
@@ -70,7 +76,7 @@ function createCodeFromMap(m) {
     return code;
 }
 
-function splitIntoArray(st) {
+function createMapFromCode(st) {
     return st.match(/.{20}/g).map((x) => x.split(''));
 }
 
@@ -105,26 +111,23 @@ var beginningState = {
         game.state.start("loading");
     }
 };
+
 // the state that shows the loading bar while things load
 var loadingState = {
     preload: function() {
         game.add.sprite(game.world.centerX - (440/2), game.world.centerY - (20/2), "loading-bg");
         var loadingBar = game.add.sprite(game.world.centerX - (440/2), game.world.centerY - (20/2), "loading");
         this.load.setPreloadSprite(loadingBar);
+        
         setBackgroundColor("#3598db");
         
-        game.load.image('player','assets/player.png');
-        game.load.image('wall','assets/wall.png');
-        game.load.image('coin','assets/coin.png');
-        game.load.image('enemy','assets/enemy.png');
-        game.load.image('select','assets/select.png');
+        Object.keys(requiredImages).forEach((key) => {
+            game.load.image(key,requiredImages[key]);
+        });
 
-        game.load.image('outline','assets/outline.png');
-        game.load.image('skullicon','assets/skull-tiny.png');
-        game.load.image('clockicon','assets/clock-tiny.png');
-
-        game.load.spritesheet('door','assets/door.png', 20, 20);
-        game.load.spritesheet('switch','assets/switch.png', 20, 20);
+        Object.keys(requiredSpritesheets).forEach((key) => {
+            game.load.spritesheet(key,requiredSpritesheets[key],20,20)
+        });
 
         game.forceSingleUpdate = true;
         game.renderer.renderSession.roundPixels = true;
@@ -135,9 +138,8 @@ var loadingState = {
         game.state.add('menu',gameMenuState);
         game.state.add('death',deathState);
         game.state.add('levelComplete',levelCompleteState);
-        game.state.add('end',endState);
-        game.state.add("levelCreator", levelCreatorState);
-        
+        game.state.add('end',successState);
+        game.state.add("levelCreator", levelCreatorState);        
 
         game.state.start("menu");
         showTutorial();
@@ -167,14 +169,14 @@ var gameMenuState = {
         setBackgroundColor("#3598db");
         game.add.existing(this.titleText);
         //game.add.existing(this.levCreText);
-        this.spacebar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-        this.b = game.input.keyboard.addKey(Phaser.Keyboard.B);
+        this.KEY_SPACE = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+        this.KEY_B = game.input.keyboard.addKey(Phaser.Keyboard.B);
         setDialog('menu');
     },
     update: function() {
-        if(this.spacebar.isDown) {
+        if(this.KEY_SPACE.isDown) {
             game.state.start("main");
-        } else if (this.b.isDown) {
+        } else if (this.KEY_B.isDown) {
             game.state.start("levelCreator");
         }
     }
@@ -194,8 +196,10 @@ var deathState = {
     create: function() {
         setBackgroundColor("#3598db");
         game.add.existing(this.titleText);
-        this.spacebar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-        this.keyQ = game.input.keyboard.addKey(Phaser.Keyboard.Q);
+
+        this.KEY_SPACE = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+        this.KEY_Q = game.input.keyboard.addKey(Phaser.Keyboard.Q);
+        
         if(!inUserLevel) {
             deaths ++;
             totalDeaths ++;
@@ -210,14 +214,14 @@ var deathState = {
         setDialog('between');
     },
     update: function() {
-        if(this.spacebar.isDown) {
+        if(this.KEY_SPACE.isDown) {
             if(inUserLevel) {
                 game.state.start("levelCreator");
             } else {
                 game.state.start("main");
             }
         }
-        if(this.keyQ.isDown) {
+        if(this.KEY_Q.isDown) {
             if(inUserLevel) {
                 game.state.start("levelCreator");
             } else {
@@ -227,7 +231,7 @@ var deathState = {
     }
 };
 // the end screen (best attitude)
-var endState = {
+var successState = {
     init: function() {
         this.titleText = game.make.text(game.world.centerX, game.world.centerY, "best attitude.", {
             font: 'bold 40px monospace',
@@ -251,29 +255,34 @@ var endState = {
     create: function() {
         setBackgroundColor("#67b56d");
         setDialog('end');
+        
+        game.add.existing(this.titleText);
+        game.add.existing(this.timeSpentText);
+        game.add.existing(this.deathsText);
+
+        // putting icons next to text
         this.timeSpentIcon = game.add.sprite(this.timeSpentText.left - 5, this.timeSpentText.y - 4, 'clockicon');
         this.timeSpentIcon.anchor.set(1,0.5);
         this.timeSpentIcon.alpha = 0.7;
         this.deathsIcon = game.add.sprite(this.deathsText.left - 5, this.deathsText.y - 4, 'skullicon');
         this.deathsIcon.anchor.set(1,0.5);
         this.deathsIcon.alpha = 0.7;
-        console.log(this.timeSpentText);
-        console.log(this.deathsText);
-        game.add.existing(this.titleText);
-        game.add.existing(this.timeSpentText);
-        game.add.existing(this.deathsText);
+
+        // filling out text
         this.timeSpentText.text = Math.floor(timeSpent / 1000);
         this.deathsText.text = totalDeaths;
 
-        this.spacebar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-        this.keyQ = game.input.keyboard.addKey(Phaser.Keyboard.Q);
+        this.KEY_SPACE = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+        this.KEY_Q = game.input.keyboard.addKey(Phaser.Keyboard.Q);
+
+        // reset all variables
         currentLevel = 0;
         deaths = 0;
         totalDeaths = 0;
         timeSpent = 0;
     },
     update: function() {
-        if(this.keyQ.isDown) {
+        if(this.KEY_Q.isDown) {
             if(inUserLevel) {
                 game.state.start("levelCreator");
             } else {
@@ -281,7 +290,7 @@ var endState = {
             }
         }
 
-        if(this.spacebar.isDown) {
+        if(this.KEY_SPACE.isDown) {
             this.timeSpentIcon.alpha = 0.7;
             this.timeSpentText.alpha = 0.7;
             this.deathsIcon.alpha = 0.7;
@@ -294,6 +303,7 @@ var endState = {
         }
     }
 };
+
 // the level complete screen (good attitude)
 var levelCompleteState = {
     init: function() {
@@ -307,8 +317,11 @@ var levelCompleteState = {
     create: function() {
         setBackgroundColor("#3598db");
         game.add.existing(this.titleText);
-        this.spacebar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-        this.keyQ = game.input.keyboard.addKey(Phaser.Keyboard.Q);
+
+        this.KEY_SPACE = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+        this.KEY_Q = game.input.keyboard.addKey(Phaser.Keyboard.Q);
+        
+        // increment levels
         if(!inUserLevel) {
             currentLevel ++;
             deaths = 0;
@@ -320,20 +333,15 @@ var levelCompleteState = {
         setDialog('between');
     },
     update: function() {
-        if(this.spacebar.isDown) {
-            if(inUserLevel) {
+        if(inUserLevel) {
+            if(this.KEY_SPACE.isDown || this.KEY_Q.isDown) {
                 game.state.start("levelCreator");
-            } else {
+            }
+        } else {
+            if(this.KEY_SPACE.isDown)
                 game.state.start("main");
-            }
-        }
-        
-        if(this.keyQ.isDown) {
-            if(inUserLevel) {
-                game.state.start("levelCreator");
-            } else {
+            if (this.KEY_Q.isDown)
                 game.state.start("menu");
-            }
         }
     }
 };
@@ -359,29 +367,30 @@ var levelCreatorState = {
         
         this.map = 
         [//   0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19
-            ["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"],
-            ["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"],
-            ["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"],
-            ["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"],
-            ["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"],
-            ["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"],
-            ["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"],
-            ["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"],
-            ["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"],
-            ["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"],
-            ["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"],
-            ["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"],
-            ["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"],
-            ["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"],
-            ["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"],
-            ["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"],
-            ["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"],
-            ["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"],
-            ["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"],
-            ["0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         ];
         game.add.sprite(0,0,'outline');
         
+        // keybinds
         this.wallKey = game.input.keyboard.addKey(Phaser.Keyboard.W);
         this.coinKey = game.input.keyboard.addKey(Phaser.Keyboard.A);
         this.enemyKey = game.input.keyboard.addKey(Phaser.Keyboard.D);
@@ -395,7 +404,7 @@ var levelCreatorState = {
         this.openKey = game.input.keyboard.addKey(Phaser.Keyboard.T);
 
         this.submitKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-        this.keyQ = game.input.keyboard.addKey(Phaser.Keyboard.Q);
+        this.KEY_Q = game.input.keyboard.addKey(Phaser.Keyboard.Q);
 
         this.cursorKeys = game.input.keyboard.createCursorKeys();
         
@@ -408,97 +417,83 @@ var levelCreatorState = {
             
             for (var i = 0; i < this.map.length; i++) {
                 for (var j = 0; j < this.map[i].length; j++) {
-                    // TODO: change to a switch/case
-                    if (this.map[i][j] == '1') {
-                        var wall = game.add.sprite(20+20*j,20+20*i,'wall');
-                        this.buildingBlocks.add(wall);
-                    } else if (this.map[i][j] == '2') {
-                        var coin = game.add.sprite(20+20*j,20+20*i,'coin');
-                        this.buildingBlocks.add(coin);
-                    } else if (this.map[i][j] == '3') {
-                        var enemy = game.add.sprite(20+20*j,20+20*i,'enemy');
-                        this.buildingBlocks.add(enemy);
-                    } else if (this.map[i][j] == '4') {
-                        var player = game.add.sprite(20+20*j,20+20*i,'player');
-                        this.buildingBlocks.add(player);
-                    } else if (this.map[i][j] == '5') {
-                        var _switch = game.add.sprite(20+20*j,20+20*i,'switch');
-                        _switch.frame = 0;
-                        this.buildingBlocks.add(_switch);
-                    } else if (this.map[i][j] == '6' || this.map[i][j] == '7') {
-                        var door = game.add.sprite(20+20*j,20+20*i,'door');
-                        door.frame = 0;
-                        if(this.map[i][j] == '7') {
-                            door.frame = 1;
+                    
+                    var thisTile = this.map[i][j];
+
+                    if(thisTile > 0) {
+                        var tileSprite = tileNames[thisTile];
+                        var frame = 0;
+
+                        // closed door
+                        if (thisTile == 6) {
+                            tileSprite = "door";
+                        // open door
+                        } else if (thisTile == 7) {
+                            frame = 1;
+                            tileSprite = "door";
                         }
-                        this.buildingBlocks.add(door);
+
+                        var tile = game.add.sprite(20+20*j,20+20*i,tileSprite);
+                        tile.frame = frame
+                        this.buildingBlocks.add(tile);
                     }
                 }
             }
         }
         
-        
         this.cursorSprite = game.add.sprite(20,20,'select');
         this.selectGroup = game.add.group();
         this.selectGroup.add(this.cursorSprite);
-
 
         setDialog('levelCreator');
     },
     update: function() {
         // place wall
-        if(this.wallKey.isDown && (keyCD["wallKey"] < game.time.now || keyCD["wallKey"] == undefined)) {
-            keyCD["wallKey"] = game.time.now + 150;
+        if(this.isKeyActive("wallKey")) {
             this.killSprites();
-            this.map[this.cursor[1]][this.cursor[0]] = "1";
+            this.map[this.cursor[1]][this.cursor[0]] = 1;
             this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'wall'));
         }
         // place coin
-        if(this.coinKey.isDown && (keyCD["coinKey"] < game.time.now || keyCD["coinKey"] == undefined)) {
-            keyCD["coinKey"] = game.time.now + 150;
+        if(this.isKeyActive("coinKey")) {
             this.killSprites();
-            this.map[this.cursor[1]][this.cursor[0]] = "2";
+            this.map[this.cursor[1]][this.cursor[0]] = 2;
             this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'coin'));
         }
         // place enemy
-        if(this.enemyKey.isDown && (keyCD["enemyKey"] < game.time.now || keyCD["enemyKey"] == undefined)) {
-            keyCD["enemyKey"] = game.time.now + 150;
+        if(this.isKeyActive("enemyKey")) {
             this.killSprites();
-            this.map[this.cursor[1]][this.cursor[0]] = "3";
+            this.map[this.cursor[1]][this.cursor[0]] = 3;
             this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'enemy'));
         }
         // place player
-        if(this.playerKey.isDown && (keyCD["playerKey"] < game.time.now || keyCD["playerKey"] == undefined)) {
-            keyCD["playerKey"] = game.time.now + 150;
+        if(this.isKeyActive("playerKey")) {
             this.killSprites();
-            this.map[this.cursor[1]][this.cursor[0]] = "4";
+            this.map[this.cursor[1]][this.cursor[0]] = 4;
             this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'player'));
         }
         // place switch
-        if(this.switchKey.isDown && (keyCD["switchKey"] < game.time.now || keyCD["switchKey"] == undefined)) {
-            keyCD["switchKey"] = game.time.now + 150;
+        if(this.isKeyActive("switchKey")) {
             this.killSprites();
-            this.map[this.cursor[1]][this.cursor[0]] = "5";
+            this.map[this.cursor[1]][this.cursor[0]] = 5;
             this.buildingBlocks.add(game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'switch'));
         }
         // place door
-        if(this.doorKey.isDown && (keyCD["doorKey"] < game.time.now || keyCD["doorKey"] == undefined)) {
-            keyCD["doorKey"] = game.time.now + 150;
+        if(this.isKeyActive("doorKey")) {
             this.killSprites();
             var tempSprite = game.add.sprite(20+20*this.cursor[0],20+20*this.cursor[1],'door');
 
             if(this.doorKey.shiftKey == false) {
-                this.map[this.cursor[1]][this.cursor[0]] = "6";
+                this.map[this.cursor[1]][this.cursor[0]] = 6;
             } else {
-                this.map[this.cursor[1]][this.cursor[0]] = "7";
+                this.map[this.cursor[1]][this.cursor[0]] = 7;
                 tempSprite.frame = 1;
             }
 
             this.buildingBlocks.add(tempSprite);
         }
         // remove elements
-        if(this.deleteKey.isDown && (keyCD["deleteKey"] < game.time.now || keyCD["deleteKey"] == undefined)) {
-            keyCD["deleteKey"] = game.time.now + 150;
+        if(this.isKeyActive("deleteKey")) {
             this.killSprites();
         }
         // plays the level
@@ -509,48 +504,43 @@ var levelCreatorState = {
             game.state.start("main");
         }
         // gives the game number
-        if(this.debugKey.isDown && (keyCD["debugKey"] < game.time.now || keyCD["debugKey"] == undefined)) {
-            keyCD["debugKey"] = game.time.now + 200;
-            prompt("Here is your game number.", createCodeFromMap(this.map));
+        if(this.isKeyActive("debugKey")) {
+            showPopup("get level code", createCodeFromMap(this.map),()=>{});
         }
         // takes the game number
-        if(this.openKey.isDown && (keyCD["openKey"] < game.time.now || keyCD["openKey"] == undefined)) {
-            keyCD["openKey"] = game.time.now + 200;
-            var levelNo = prompt("Enter your game number.");
-            if(levelNo != null) {
-                if(levelNo.length == 400) {
-                    inUserLevel = true;
-                    userLevel = splitIntoArray(levelNo);
-                    game.state.start("levelCreator");
-                } else {
-                    alert("Game number was invalid.");
+        if(this.isKeyActive("openKey")) {
+            showPopup("load a level", "",(levelNo)=>{
+                if(levelNo != null) {
+                    if(levelNo.length == 400) {
+                        inUserLevel = true;
+                        userLevel = createMapFromCode(levelNo);
+                        game.state.start("levelCreator");
+                    } else {
+                        showPopup("error","level number was invalid");
+                    }
                 }
-            }
+            });
         }
         // sets this.cursor 
-        if(this.cursorKeys.left.isDown && (keyCD["cursorKeys.left"] < game.time.now || keyCD["cursorKeys.left"] == undefined)) {
-            keyCD["cursorKeys.left"] = game.time.now + 200;
+        if(this.isCursorKeyActive("left")) {
             if (this.cursor[0] > 0) {
                 this.cursor[0] --;
                 this.cursorSprite.x = this.cursor[0]*20 + 20;
             }
         }
-        if(this.cursorKeys.right.isDown && (keyCD["cursorKeys.right"] < game.time.now || keyCD["cursorKeys.right"] == undefined)) {
-            keyCD["cursorKeys.right"] = game.time.now + 200;
+        if(this.isCursorKeyActive("right")) {
             if (this.cursor[0] < 19) {
                 this.cursor[0] ++;
                 this.cursorSprite.x = this.cursor[0]*20 + 20;
             }
         }
-        if(this.cursorKeys.up.isDown && (keyCD["cursorKeys.up"] < game.time.now || keyCD["cursorKeys.up"] == undefined)) {
-            keyCD["cursorKeys.up"] = game.time.now + 200;
+        if(this.isCursorKeyActive("up")) {
             if (this.cursor[1] > 0) {
                 this.cursor[1] --;
                 this.cursorSprite.y = this.cursor[1]*20 + 20;
             }
         }
-        if(this.cursorKeys.down.isDown && (keyCD["cursorKeys.down"] < game.time.now || keyCD["cursorKeys.down"] == undefined)) {
-            keyCD["cursorKeys.down"] = game.time.now + 200;
+        if(this.isCursorKeyActive("down")) {
             if (this.cursor[1] < 19) {
                 this.cursor[1] ++;
                 this.cursorSprite.y = this.cursor[1]*20 + 20;
@@ -558,11 +548,25 @@ var levelCreatorState = {
         }
         
         // quit user level
-        if (this.keyQ.isDown) {
+        if (this.KEY_Q.isDown) {
             inUserLevel = false;
             this.removeEventListeners();
             game.state.start("menu");
         }
+    },
+    isKeyActive: function(key) {
+        if(this[key].isDown && (keyCD[key] < game.time.now || keyCD[key] == undefined)) {
+            keyCD[key] = game.time.now + 200;
+            return true;
+        }
+        return false;
+    },
+    isCursorKeyActive: function(cKey) {
+        if(this.cursorKeys[cKey].isDown && (keyCD["cursorKeys." + cKey] < game.time.now || keyCD["cursorKeys." + cKey] == undefined)) {
+            keyCD["cursorKeys." + cKey] = game.time.now + 200;
+            return true;
+        }
+        return false;
     },
     // kills the sprites where a mouse cursor is
     killSprites: function () {
@@ -584,13 +588,13 @@ var mainState = {
         game.physics.startSystem(Phaser.Physics.ARCADE);
         game.world.enableBody = true;
         
-        this.cursor = game.input.keyboard.createCursorKeys();
-        this.keyW = game.input.keyboard.addKey(Phaser.Keyboard.W);
-        this.keyA = game.input.keyboard.addKey(Phaser.Keyboard.A);
-        this.keyD = game.input.keyboard.addKey(Phaser.Keyboard.D);
-        this.keyQ = game.input.keyboard.addKey(Phaser.Keyboard.Q);
-        this.keySpace = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-        this.iWantToDie = game.input.keyboard.addKey(Phaser.Keyboard.X);
+        this.cursorKeys = game.input.keyboard.createCursorKeys();
+        this.KEY_W = game.input.keyboard.addKey(Phaser.Keyboard.W);
+        this.KEY_A = game.input.keyboard.addKey(Phaser.Keyboard.A);
+        this.KEY_D = game.input.keyboard.addKey(Phaser.Keyboard.D);
+        this.KEY_Q = game.input.keyboard.addKey(Phaser.Keyboard.Q);
+        this.KEY_SPACE = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+        this.KEY_X = game.input.keyboard.addKey(Phaser.Keyboard.X);
         
         this.walls = game.add.group(); // x
         this.coins = game.add.group(); // o
@@ -600,7 +604,7 @@ var mainState = {
         
         // 20x20 level 
         
-        var level = splitIntoArray(levels[currentLevel]);
+        var level = createMapFromCode(levels[currentLevel]);
         if (inUserLevel) {
             level = userLevel;
         }
@@ -613,15 +617,15 @@ var mainState = {
             for (var j = 0; j < level[i].length; j++) {
                 if (level[i][j] == '1') {
                     var wall = game.add.sprite(20+20*j,20+20*i,'wall');
-                    this.walls.add(wall);
                     wall.body.immovable = true;
+                    this.walls.add(wall);
                 } else if (level[i][j] == '2') {
                     var coin = game.add.sprite(20+20*j,20+20*i,'coin');
                     this.coins.add(coin);
                 } else if (level[i][j] == '3') {
                     var enemy = game.add.sprite(20+20*j,20+20*i,'enemy');
-                    this.enemies.add(enemy);
                     enemy.body.immovable = true;
+                    this.enemies.add(enemy);
                 } else if (level[i][j] == '4') {
                     playerX = 20+20*j;
                     playerY = 20+20*i;
@@ -634,14 +638,12 @@ var mainState = {
                 } else if (level[i][j] == '6' || level[i][j] == '7') {
                     var door = game.add.sprite(20+20*j,20+20*i,'door');
                     this.doors.add(door);
-                    door.isActiveDoor = true;
+                    door.isActiveDoor = (level[i][j] == '6');
                     door.body.immovable = true;
+                    
                     door.frame = 0;
-
-                    if(level[i][j] == '7') {
-                        door.isActiveDoor = false;
+                    if(level[i][j] == '7')
                         door.frame = 1;
-                    }
                 }
             }
         }
@@ -667,14 +669,14 @@ var mainState = {
         game.physics.arcade.collide(this.player,this.enemies, this.death, null, this);
         
         // move the player
-        if (this.cursor.left.isDown || this.keyA.isDown)
+        if (this.cursorKeys.left.isDown || this.KEY_A.isDown)
             this.player.body.velocity.x = -200;
-        else if (this.cursor.right.isDown || this.keyD.isDown)
+        else if (this.cursorKeys.right.isDown || this.KEY_D.isDown)
             this.player.body.velocity.x = 200;
         else
             this.player.body.velocity.x = 0;
         
-        if ((this.cursor.up.isDown || this.keySpace.isDown || this.keyW.isDown) && this.player.body.touching.down)
+        if ((this.cursorKeys.up.isDown || this.KEY_SPACE.isDown || this.KEY_W.isDown) && this.player.body.touching.down)
             this.player.body.velocity.y = -380;
         
         // pass the level if hit all coins
@@ -683,12 +685,12 @@ var mainState = {
         }
         
         // kys if want to die
-        if(this.iWantToDie.isDown) {
+        if(this.KEY_X.isDown) {
             this.death();
         }
     
         // quit to menu
-        if(this.keyQ.isDown) {
+        if(this.KEY_Q.isDown) {
             if(inUserLevel) {
                 game.state.start("levelCreator");
             } else {
@@ -697,7 +699,7 @@ var mainState = {
         }
 
         // if the player's fallen out
-        if(this.player.y > 421 -20) {
+        if(this.player.x < -20 || this.player.y > 420 || this.player.y > 421 -20) {
             this.onPlayerLeaveBounds();
         }
     },

@@ -64,7 +64,7 @@ span {
     margin-left: -200px;
     width: 400px;
     box-sizing: border-box;
-    padding: 5px 30px;
+    padding: 5px 0;
     border-bottom: 2px solid white;
     font-size: 16px;
     cursor: default;
@@ -171,4 +171,69 @@ span {
 }
 
 #help-dialog a:hover {
+}
+
+#popup {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    box-sizing: border-box;
+    width: 320px;
+    height: 450px;
+    display: flex;
+    flex-direction: column;
+    margin-left: -160px;
+    margin-top: -225px;
+    padding: 30px;
+}
+
+#popup h1 {
+    margin: 0;
+    margin-top: -10px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+#levelcode {
+    box-sizing: border-box;
+    font-family: monospace;
+    flex: 1;
+    resize: none;
+    color: white;
+    font-size: 14px;
+    background-color: transparent;
+    border: 0;
+    border-left: 2px solid rgba(255, 255, 255, 0.3);
+    border-right: 2px solid rgba(255, 255, 255, 0.3);
+    padding: 10px;
+    margin: 0;
+    transition: border-color 0.3s;
+}
+
+#levelcode:focus {
+    outline: none;
+    border-color: rgba(255,255,255,1);
+
+}
+
+.confirm-button {
+    box-sizing: border-box;
+    color: white;
+    font-size: 18px;
+    text-align: center;
+    padding: 10px;
+    margin-top: 15px;
+    margin-bottom: -15px;
+    border-top: 2px solid rgba(255,255,255,0.3);
+    border-bottom: 2px solid rgba(255,255,255,0.3);
+    cursor: pointer;
+    width: 110px;
+    margin: 0 auto;
+    transition: border-color 0.3s;
+    font-weight: bold;
+    font-size: 24px;
+}
+
+.confirm-button:hover {
+    border-color: rgba(255,255,255,1);
 }

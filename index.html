@@ -8,6 +8,7 @@
     <title>attitude.</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type="text/javascript" src="js/phaser.min.js"></script>
+    <script type="text/javascript" src="js/constants.js"></script>
     <script type="text/javascript" src="js/levels.js"></script>
 </head>
 <body style="background-color: rgb(53, 152, 219);">
@@ -24,7 +25,7 @@
         <div id="main" class="contents">
             <table>
                 <tr>
-                    <td><kbd>ARROWS</kbd><span> move</span></td>
+                    <td><kbd>ARROWS / WASD</kbd><span> move</span></td>
                 </tr>
                 <tr>
                     <td><kbd>X</kbd><span> die</span></td>
@@ -58,7 +59,9 @@
                 </tr>
                 <tr>    
                     <td><kbd>X</kbd><span> on door</span></td>
-                    <td><kbd>&#8679;</kbd><span>+<kbd>X</kbd> off door</span></td>
+                </tr>
+                <tr>
+                    <td><kbd>&#8679; X</kbd><span> off door</span></td>
                 </tr>
             </table>
         </div>
@@ -92,6 +95,11 @@
                 </tr>
             </table>
         </div>
+    </div>
+    <div id="popup" class="hidden">
+        <h1>level code</h1>
+        <textarea id="levelcode"></textarea>
+        <div class="confirm-button">return</div>
     </div>
     <script type="text/javascript" src="js/main.js"></script>
 </body>
