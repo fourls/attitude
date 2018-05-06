@@ -102,7 +102,7 @@ var inUserLevel = false;
 // the state right at the start - sets up the loading state
 var beginningState = {
     preload: function() {
-        setBackgroundColor("#3598db");
+        setBackgroundColor(mainBlue);
         game.load.image('loading', 'assets/loading.png');
         game.load.image('loading-bg', 'assets/loading-bg.png');
     },
@@ -119,7 +119,7 @@ var loadingState = {
         var loadingBar = game.add.sprite(game.world.centerX - (440/2), game.world.centerY - (20/2), "loading");
         this.load.setPreloadSprite(loadingBar);
         
-        setBackgroundColor("#3598db");
+        setBackgroundColor(mainBlue);
         
         Object.keys(requiredImages).forEach((key) => {
             game.load.image(key,requiredImages[key]);
@@ -166,7 +166,7 @@ var gameMenuState = {
         totalDeaths = 0;
     },
     create: function() {
-        setBackgroundColor("#3598db");
+        setBackgroundColor(mainBlue);
         game.add.existing(this.titleText);
         //game.add.existing(this.levCreText);
         this.KEY_SPACE = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
@@ -194,7 +194,7 @@ var deathState = {
         this.titleText.anchor.set(0.5);
     },
     create: function() {
-        setBackgroundColor("#3598db");
+        setBackgroundColor(mainBlue);
         game.add.existing(this.titleText);
 
         this.KEY_SPACE = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
@@ -205,7 +205,7 @@ var deathState = {
             totalDeaths ++;
             if(deaths > 3) {
                 this.titleText.text = "worst attitude.";
-                setBackgroundColor("#953f3f");
+                setBackgroundColor(deathRed);
                 deaths = 0;
                 currentLevel = 0;
                 // TODO: add deaths + time to worst attitude
@@ -253,7 +253,7 @@ var successState = {
         this.deathsText.anchor.set(0,0.5);
     },
     create: function() {
-        setBackgroundColor("#67b56d");
+        setBackgroundColor(successGreen);
         setDialog('end');
         
         game.add.existing(this.titleText);
@@ -315,7 +315,7 @@ var levelCompleteState = {
         this.titleText.anchor.set(0.5);
     },
     create: function() {
-        setBackgroundColor("#3598db");
+        setBackgroundColor(mainBlue);
         game.add.existing(this.titleText);
 
         this.KEY_SPACE = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
@@ -362,7 +362,7 @@ var levelCreatorState = {
     },
     create: function() {
         game.world.enableBody = false;
-        setBackgroundColor("#3598db");
+        setBackgroundColor(mainBlue);
         this.cursor = [0,0];
         
         this.map = 
@@ -584,7 +584,7 @@ var levelCreatorState = {
 // the game state
 var mainState = {
     create: function() {
-        setBackgroundColor("#3598db");
+        setBackgroundColor(mainBlue);
         game.physics.startSystem(Phaser.Physics.ARCADE);
         game.world.enableBody = true;
         

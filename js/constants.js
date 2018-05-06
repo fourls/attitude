@@ -1,3 +1,7 @@
+var mainBlue = "#5299c8";
+var successGreen = "#67b56d";
+var deathRed = "#953f3f";
+
 var requiredImages = {
     "player": "assets/player.png",
     "wall": "assets/wall.png",
