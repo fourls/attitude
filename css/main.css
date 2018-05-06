@@ -46,14 +46,20 @@ span {
 }
 .tutorial {
     position: fixed;
-    bottom: 10px;
+    bottom: 24px;
     left: 50%;
     margin-left: -200px;
     width: 400px;
     text-align: center;
-    font-size: 22px;
+    font-size: 20px;
     opacity: 0;
     cursor: default;
+}
+
+
+.tutorial p {
+    margin-bottom: 8px;
+    margin-top: 8px;
 }
 
 #context-dialog {
