@@ -747,3 +747,12 @@ var mainState = {
 // begins the game - the only actual code that runs :P
 game.state.add("beginning",beginningState);
 game.state.start('beginning');
+
+
+$(document).ready(() => {
+    $("#container > canvas").attr("tabindex","0");
+});
+
+$(document).on("click", () => {
+    $("#container > canvas").focus(); 
+});
