@@ -6,6 +6,11 @@ body {
 
 canvas {
     z-index: 5;
+    
+}
+
+canvas:focus {
+    outline: none;
 }
 
 #container {
